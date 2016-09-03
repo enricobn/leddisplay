@@ -1,19 +1,18 @@
 package tutorial.webapp
 
+import japgolly.scalajs.react.vdom.prefix_<^._
+import japgolly.scalajs.react.{ReactDOM, ReactElement}
+import org.scalajs.dom.document
+
 import scala.scalajs.js.JSApp
 
-import org.scalajs.dom
-import dom.document
 
 object TutorialApp extends JSApp {
   def main(): Unit = {
-    appendPar(document.body, "Hello World!")
+    ReactDOM.render(text("Hello world!"), document.body)
   }
 
-  def appendPar(targetNode: dom.Node, text: String): Unit = {
-    val parNode = document.createElement("p")
-    val textNode = document.createTextNode(text)
-    parNode.appendChild(textNode)
-    targetNode.appendChild(parNode)
+  def text(text: String): ReactElement = {
+      <.p(text).render
   }
 }

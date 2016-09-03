@@ -51,7 +51,7 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
   def scrollLeft() : Unit = {
     for ( y <- 0 until height )
       for ( x <- 0 until width)
-        matrix(y)(x) = if (x == width) black else matrix(y)(x + 1)
+        matrix(y)(x) = if (x == width -1) black else matrix(y)(x + 1)
   }
 
   private def toArray(charFont: CharFont) : Array[IndexedSeq[Boolean]] = {
@@ -60,9 +60,8 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
 
   private def print(x: Int, y: Int, map: Array[IndexedSeq[Boolean]], font: Font, color: String) : Unit = {
     for (iy <- map.indices)
-    for (ix <- map(iy).indices)
-    if (map(iy)(ix)) set(x + ix, y + iy, color)
-
+      for (ix <- map(iy).indices)
+        if (map(iy)(ix)) set(x + ix, y + iy, color)
   }
 
   private def square(x: Int, y: Int, color: String) : ReactElement = {

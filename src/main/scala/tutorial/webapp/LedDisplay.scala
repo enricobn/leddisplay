@@ -4,8 +4,6 @@ import japgolly.scalajs.react.ReactElement
 import japgolly.scalajs.react.vdom.prefix_<^._
 
 import scala.collection.mutable
-import scala.scalajs.js.annotation.JSExport
-
 
 /**
   * Created by enrico on 9/3/16.
@@ -26,7 +24,7 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
       for ( y <- 0 until height )
         for ( x <- 0 until width )
           list += square(x * (cellSize + margin), y * (cellSize + margin), matrix(y)(x))
-    <.div(list)
+    <.div(list).render
   }
 
   def set(x: Int, y: Int, color: String) : Unit = {
@@ -34,13 +32,13 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
   }
 
   private def square(x: Int, y: Int, color: String) : ReactElement = {
-    <.div(^.backgroundColor := "#" + color
-      , ^.width := cellSize + "px"
-      , ^.height := cellSize + "px"
+    <.div(^.backgroundColor := s"#$color"
+      , ^.width := s"${cellSize}px"
+      , ^.height := s"${cellSize}px"
       , ^.position := "absolute"
-      , ^.left := x + "px"
-      , ^.top := y + "px"
-    )
+      , ^.left := s"${x}px"
+      , ^.top := s"${y}px"
+    ).render
   }
 
 }

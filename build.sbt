@@ -33,3 +33,7 @@ jsDependencies ++= Seq(
     minified  "react-dom-server.min.js"
     dependsOn "react-dom.js"
     commonJSName "ReactDOMServer")
+
+// JSON
+
+libraryDependencies += "com.lihaoyi" %%% "upickle" % "0.4.1"

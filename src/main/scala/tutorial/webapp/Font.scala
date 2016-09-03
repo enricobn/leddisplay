@@ -1,10 +1,7 @@
 package tutorial.webapp
 
-import japgolly.scalajs.react.ReactDOM
-import japgolly.scalajs.react.vdom.prefix_<^._
 import org.scalajs.dom
-import org.scalajs.dom._
-import org.scalajs.dom.ext.Ajax
+
 import upickle.default._
 
 /**
@@ -12,7 +9,7 @@ import upickle.default._
   */
 
 object Font {
-  type Font = List[CharFont]
+  type Font = Array[CharFont]
 
   def readFont(url: String, onSuccess: (Font) => Unit) : Unit = {
     // for Ajax call
@@ -30,5 +27,5 @@ object Font {
   }
 }
 
-case class CharFont(char: String, map: List[String])
+case class CharFont(char: String, bitmap: Array[String])
 

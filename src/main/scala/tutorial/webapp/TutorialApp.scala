@@ -8,17 +8,16 @@ import dom.document
 import scala.scalajs.js.JSApp
 
 object TutorialApp extends JSApp {
-  var display = new LedDisplay(10, 1, 80, 8)
+  var display = new LedDisplay(10, 1, 80, 80)
 
   def main(): Unit = {
-    Font.readFont("font.json", font => ReactDOM.render(<.div(font.head.char), document.body))
-
-    /*
-    display.set(20, 1, "ff0000")
-    */
-
-    //ReactDOM.render(display.show(), document.body)
-
+    Font.readFont("font.json", font => {
+        Array.range(0, 10).foreach(y =>
+          display.print(0, y * 8, "0101010", font, "00ff00")
+        )
+        ReactDOM.render(display.show(), document.body)
+      }
+    )
   }
 
   def text(text: String): ReactElement = {

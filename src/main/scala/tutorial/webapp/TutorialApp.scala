@@ -1,7 +1,7 @@
 package tutorial.webapp
 
 import japgolly.scalajs.react.vdom.prefix_<^._
-import japgolly.scalajs.react.{BackendScope, Callback, ReactComponentB, ReactDOM, ReactElement}
+import japgolly.scalajs.react.{BackendScope, Callback, ReactComponentB, ReactDOM}
 import org.scalajs.dom
 import dom.document
 
@@ -20,7 +20,7 @@ class Backend($: BackendScope[Unit, State]) {
     $.modState(s => State(s.secondsElapsed + 1))
 
   def start = Callback {
-    interval = js.timers.setInterval(100)(tick.runNow())
+    interval = js.timers.setInterval(500)(tick.runNow())
   }
 
   def clear = Callback {
@@ -29,15 +29,15 @@ class Backend($: BackendScope[Unit, State]) {
   }
 
   def render(s: State) = {
-    g.console.log("Start rendering")
-    var time = System.currentTimeMillis()
-    var result : ReactElement = null
-    if (s.secondsElapsed <= 10) {
+    //g.console.log("Start rendering")
+    //var time = System.currentTimeMillis()
+    var result : ReactTag = null
+    if (s.secondsElapsed <= 60) {
       TutorialApp.display.scrollLeft()
-      g.console.log("scrollLeft " + (System.currentTimeMillis() - time))
-      time = System.currentTimeMillis()
+      //g.console.log("scrollLeft " + (System.currentTimeMillis() - time))
+      //time = System.currentTimeMillis()
       result = TutorialApp.display.show()
-      g.console.log("show " + (System.currentTimeMillis() - time))
+      //g.console.log("show " + (System.currentTimeMillis() - time))
     } else {
       result = <.div("Seconds elapsed: ", s.secondsElapsed)
     }
@@ -45,9 +45,11 @@ class Backend($: BackendScope[Unit, State]) {
   }
 }
 
-
+/**
+  * open http://localhost:63342/led_display/index.html
+  */
 object TutorialApp extends JSApp {
-  val display = new LedDisplay(10, 1, 80, 80)
+  val display = new LedDisplay(10, 1, 120, 24)
 
   def main(): Unit = {
     /*
@@ -68,7 +70,7 @@ object TutorialApp extends JSApp {
       .build
 
     Font.readFont("font.json", font => {
-        Array.range(0, 8).foreach(y =>
+        Array.range(0, 3).foreach(y =>
           display.print(0, y * 8, "0101010", font, "00ff00")
         )
       }
@@ -84,7 +86,4 @@ object TutorialApp extends JSApp {
     //g.window.requestAnimationFrame(loop)
   }
 */
-  def text(text: String): ReactElement = {
-      <.p(text).render
-  }
 }

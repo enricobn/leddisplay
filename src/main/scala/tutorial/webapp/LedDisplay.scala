@@ -1,6 +1,5 @@
 package tutorial.webapp
 
-import japgolly.scalajs.react.ReactElement
 import japgolly.scalajs.react.vdom.prefix_<^._
 import tutorial.webapp.Font.Font
 
@@ -11,20 +10,22 @@ import scala.collection.mutable
   * Created by enrico on 9/3/16.
   */
 class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
-  val black = "000000"
+  private val sCellSize = (s"${cellSize}px").intern()
   private var matrix = new Array[Array[String]](height)
+
+  val black = "000000"
 
   for (y <- 0 until height)
     matrix(y) = new Array[String](width)
 
   clear()
 
-  def show() : ReactElement = {
-    var list = new mutable.MutableList[ReactElement]
+  def show() : ReactTag = {
+    var list = new mutable.MutableList[ReactTag]
       for ( y <- 0 until height )
         for ( x <- 0 until width )
           list += square(x * (cellSize + margin), y * (cellSize + margin), matrix(y)(x))
-    <.div(list).render
+    <.div(list)
   }
 
   def clear() : Unit = {
@@ -64,14 +65,14 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
         if (map(iy)(ix)) set(x + ix, y + iy, color)
   }
 
-  private def square(x: Int, y: Int, color: String) : ReactElement = {
-    <.div(^.backgroundColor := s"#$color"
-      , ^.width := s"${cellSize}px"
-      , ^.height := s"${cellSize}px"
+  private def square(x: Int, y: Int, color: String) : ReactTag = {
+    <.div(^.backgroundColor := "#" + color
+      , ^.width := sCellSize
+      , ^.height := sCellSize
       , ^.position := "absolute"
-      , ^.left := s"${x}px"
-      , ^.top := s"${y}px"
-    ).render
+      , ^.left := x + "px"
+      , ^.top := y + "px"
+    )
   }
 
 }

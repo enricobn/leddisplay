@@ -11,20 +11,20 @@ import scala.scalajs.js.timers._
   */
 @JSExport
 object TutorialAppCanvas {
+  val TIMEOUT = 50
 
   @JSExport
   def main(canvas: html.Canvas) : Unit = {
     val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
-    val display = new LedDisplayCanvas(ctx, cellSize = 10, margin = 1, width = 120, height = 8, offColor = "black",
-      onColor = "#00ff00")
+    val display = new LedDisplayCanvas(ctx, cellSize = 10, margin = 1, width = 120, height = 8, onColor = "#ff0000")
 
 
     def loop : (Double) => Unit = (time: Double) => {
       display.scrollLeft()
       display.show()
 
-      setTimeout(100) {
+      setTimeout(TIMEOUT) {
         dom.window.requestAnimationFrame(loop)
       }
     }
@@ -36,7 +36,7 @@ object TutorialAppCanvas {
 
           display.show()
 
-          setTimeout(100) {
+          setTimeout(TIMEOUT) {
             loop.apply(0)
           }
         }

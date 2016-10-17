@@ -1,8 +1,7 @@
 package tutorial.webapp
 
 import org.scalajs.dom
-import org.scalajs.dom.html
-import org.scalajs.dom.raw.ImageData
+import org.scalajs.dom.ext.Color
 import tutorial.webapp.Font.Font
 
 import scala.collection.immutable.IndexedSeq
@@ -11,11 +10,15 @@ import scala.collection.immutable.IndexedSeq
   * Created by enrico on 9/3/16.
   */
 class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin : Int, width : Int, height : Int,
-                       offColor: String, onColor: String) {
-  private val matrix = new Array[Array[String]](height)
+                       onColor: String) {
+  private val matrix = new Array[Array[Double]](height)
+  private val halfCellSize: Int = cellSize / 2
+  private val offColorCoeff = 0.2
+  private val offColor = deriveColor(onColor, offColorCoeff)
+  private val onColorColor = Color(onColor)
 
   for (y <- 0 until height)
-    matrix(y) = new Array[String](width)
+    matrix(y) = new Array[Double](width)
 
   clear()
 
@@ -25,9 +28,13 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
 //  val offScreenContext = offscreenCanvas.getContext("2d")
 
   def show() {
-      for ( y <- 0 until height )
-        for ( x <- 0 until width )
-          square(ctx, x * (cellSize + margin), y * (cellSize + margin), matrix(y)(x))
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, width * (cellSize + margin) + margin, height * (cellSize + margin) + margin)
+
+    for ( y <- 0 until height )
+      for ( x <- 0 until width )
+        square(ctx, x * (cellSize + margin), y * (cellSize + margin), matrix(y)(x))
+
 //    var image = offScreenContext.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).asInstanceOf[ImageData]
 //    ctx.putImageData(image, 0, 0)
   }
@@ -35,10 +42,10 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
   def clear() : Unit = {
     for ( y <- 0 until height )
       for ( x <- 0 until width )
-        matrix(y)(x) = offColor
+        matrix(y)(x) = offColorCoeff
   }
 
-  def set(x: Int, y: Int, color: String) : Unit = {
+  def set(x: Int, y: Int, color: Double) : Unit = {
     matrix(y)(x) = color
   }
 
@@ -55,8 +62,28 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
 
   def scrollLeft() : Unit = {
     for ( y <- 0 until height )
-      for ( x <- 0 until width)
-        matrix(y)(x) = if (x == width -1) offColor else matrix(y)(x + 1)
+      for ( x <- 0 until width) {
+        val actualValue = matrix(y)(x)
+        val newValue: Double = if (x == width - 1) 0 else matrix(y)(x + 1)
+
+        matrix(y)(x) =
+          if (newValue == 1) {
+            1
+          } else if (actualValue < offColorCoeff) {
+            offColorCoeff
+          } else {
+            actualValue * 0.8
+          }
+
+        if (x < width - 1) {
+          matrix(y)(x + 1) =
+            if (newValue < offColorCoeff) {
+              offColorCoeff
+            } else {
+              newValue * 0.8
+            }
+        }
+      }
   }
 
   private def toArray(charFont: CharFont) : Array[IndexedSeq[Boolean]] = {
@@ -66,12 +93,27 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
   private def print(x: Int, y: Int, map: Array[IndexedSeq[Boolean]], font: Font) : Unit = {
     for (iy <- map.indices)
       for (ix <- map(iy).indices)
-        if (map(iy)(ix)) set(x + ix, y + iy, onColor)
+        if (map(iy)(ix)) set(x + ix, y + iy, 1)
   }
 
-  private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: String) {
-    ctx.fillStyle = color
-    ctx.fillRect(x, y, cellSize, cellSize)
+  private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: Double) {
+    ctx.fillStyle = deriveColor(onColorColor, color)
+//    ctx.fillRect(x, y, cellSize, cellSize)
+    fillCircle(ctx, x, y)
   }
 
+  def fillCircle(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int): Unit = {
+    ctx.beginPath()
+    ctx.arc(x + halfCellSize +1, y + halfCellSize +1, halfCellSize, 0, 2 * Math.PI, false)
+    ctx.fill()
+    ctx.stroke()
+  }
+
+  def deriveColor(color: String, coeff: Double) : String = {
+    deriveColor(Color(color), coeff)
+  }
+
+  def deriveColor(color: Color, coeff: Double) : String = {
+    Color((color.r * coeff).toInt, (color.g * coeff).toInt, (color.b * coeff).toInt).toString()
+  }
 }

@@ -3,7 +3,6 @@ package tutorial.webapp
 import org.scalajs.dom
 import org.scalajs.dom.html
 
-import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.annotation.JSExport
 import scala.scalajs.js.timers._
 
@@ -17,7 +16,8 @@ object TutorialAppCanvas {
   def main(canvas: html.Canvas) : Unit = {
     val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
-    val display = new LedDisplayCanvas(ctx, cellSize = 10, margin = 1, width = 120, height = 8)
+    val display = new LedDisplayCanvas(ctx, cellSize = 10, margin = 1, width = 120, height = 8, offColor = "black",
+      onColor = "#00ff00")
 
 
     def loop : (Double) => Unit = (time: Double) => {
@@ -31,7 +31,7 @@ object TutorialAppCanvas {
 
     Font.readFont("font.json", font => {
           Array.range(0, 1).foreach(y => {
-            display.print(0, y * 8, "010101001011", font, "#00ff00")
+            display.print(0, y * 8, "010101001011", font)
           })
 
           display.show()

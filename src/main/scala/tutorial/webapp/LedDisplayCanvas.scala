@@ -10,10 +10,9 @@ import scala.collection.immutable.IndexedSeq
 /**
   * Created by enrico on 9/3/16.
   */
-class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin : Int, width : Int, height : Int) {
+class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin : Int, width : Int, height : Int,
+                       offColor: String, onColor: String) {
   private val matrix = new Array[Array[String]](height)
-
-  val black = "black"
 
   for (y <- 0 until height)
     matrix(y) = new Array[String](width)
@@ -36,38 +35,38 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
   def clear() : Unit = {
     for ( y <- 0 until height )
       for ( x <- 0 until width )
-        matrix(y)(x) = black
+        matrix(y)(x) = offColor
   }
 
   def set(x: Int, y: Int, color: String) : Unit = {
     matrix(y)(x) = color
   }
 
-  def print(x: Int, y: Int, c: Char, font: Font, color: String) : Unit = {
+  def print(x: Int, y: Int, c: Char, font: Font) : Unit = {
     val charFont = font.find(_.char.charAt(0) == c)
 
-    charFont.foreach(cf => print(x, y, toArray(cf), font, color))
+    charFont.foreach(cf => print(x, y, toArray(cf), font))
   }
 
-  def print(x: Int, y: Int, s: String, font: Font, color: String) : Unit = {
+  def print(x: Int, y: Int, s: String, font: Font) : Unit = {
     for (ix <- s.indices)
-      print(x + ix * 8, y, s.charAt(ix), font, color)
+      print(x + ix * 8, y, s.charAt(ix), font)
   }
 
   def scrollLeft() : Unit = {
     for ( y <- 0 until height )
       for ( x <- 0 until width)
-        matrix(y)(x) = if (x == width -1) black else matrix(y)(x + 1)
+        matrix(y)(x) = if (x == width -1) offColor else matrix(y)(x + 1)
   }
 
   private def toArray(charFont: CharFont) : Array[IndexedSeq[Boolean]] = {
     charFont.bitmap.map(row => row.map(ch => ch == '1'))
   }
 
-  private def print(x: Int, y: Int, map: Array[IndexedSeq[Boolean]], font: Font, color: String) : Unit = {
+  private def print(x: Int, y: Int, map: Array[IndexedSeq[Boolean]], font: Font) : Unit = {
     for (iy <- map.indices)
       for (ix <- map(iy).indices)
-        if (map(iy)(ix)) set(x + ix, y + iy, color)
+        if (map(iy)(ix)) set(x + ix, y + iy, onColor)
   }
 
   private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: String) {

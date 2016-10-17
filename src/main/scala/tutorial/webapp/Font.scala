@@ -14,11 +14,7 @@ object Font {
   def readFont(url: String, onSuccess: (Font) => Unit) : Unit = {
     // for Ajax call
     import dom.ext._
-    import scala.scalajs
-    .concurrent
-    .JSExecutionContext
-    .Implicits
-    .runNow
+    import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
     Ajax.get(url).onSuccess{ case xhr =>
       val font = read[Font](xhr.responseText)

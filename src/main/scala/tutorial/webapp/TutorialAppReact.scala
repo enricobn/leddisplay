@@ -8,8 +8,6 @@ import dom.document
 import scala.scalajs.js.JSApp
 import scala.scalajs.js
 
-import js.Dynamic.{ global => g }
-
 case class State(secondsElapsed: Long)
 
 class Backend($: BackendScope[Unit, State]) {
@@ -29,15 +27,15 @@ class Backend($: BackendScope[Unit, State]) {
   }
 
   def render(s: State) = {
-    //g.console.log("Start rendering")
-    //var time = System.currentTimeMillis()
+//    dom.console.log("Start rendering")
+//    var time = System.currentTimeMillis()
     var result : ReactTag = null
     if (s.secondsElapsed <= 60) {
-      TutorialApp.display.scrollLeft()
-      //g.console.log("scrollLeft " + (System.currentTimeMillis() - time))
-      //time = System.currentTimeMillis()
-      result = TutorialApp.display.show()
-      //g.console.log("show " + (System.currentTimeMillis() - time))
+      TutorialAppReact.display.scrollLeft()
+//      dom.console.log("scrollLeft " + (System.currentTimeMillis() - time))
+//      time = System.currentTimeMillis()
+      result = TutorialAppReact.display.show()
+//      dom.console.log("show " + (System.currentTimeMillis() - time))
     } else {
       result = <.div("Seconds elapsed: ", s.secondsElapsed)
     }
@@ -48,7 +46,7 @@ class Backend($: BackendScope[Unit, State]) {
 /**
   * open http://localhost:63342/led_display/index.html
   */
-object TutorialApp extends JSApp {
+object TutorialAppReact extends JSApp {
   val display = new LedDisplay(10, 1, 120, 24)
 
   def main(): Unit = {
@@ -70,10 +68,10 @@ object TutorialApp extends JSApp {
       .build
 
     Font.readFont("font.json", font => {
-        Array.range(0, 3).foreach(y =>
-          display.print(0, y * 8, "0101010", font, "00ff00")
-        )
-      }
+      Array.range(0, 3).foreach(y =>
+        display.print(0, y * 8, "0101010", font, "00ff00")
+      )
+    }
     )
 
     ReactDOM.render(Timer(), document.body)

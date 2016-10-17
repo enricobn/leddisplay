@@ -9,8 +9,12 @@
 <script type="text/javascript" src="./target/scala-2.11/led_display-fastopt.js"></script>
 <script type="text/javascript" src="./target/scala-2.11/led_display-jsdeps.js"></script>
 <!-- Run tutorial.webapp.TutorialApp -->
+<div>
+    <canvas style="display: block" id="canvas" width="1024" height="768"></canvas>
+</div>
 <script type="text/javascript">
-      tutorial.webapp.TutorialApp().main();
-    </script>
+  tutorial.webapp.TutorialAppCanvas().main(document.getElementById('canvas'));
+  //tutorial.webapp.TutorialAppReact().main();
+</script>
 </body>
 </html>

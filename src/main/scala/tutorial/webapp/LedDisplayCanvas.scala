@@ -1,31 +1,36 @@
 package tutorial.webapp
 
-import japgolly.scalajs.react.vdom.prefix_<^._
+import org.scalajs.dom
+import org.scalajs.dom.html
+import org.scalajs.dom.raw.ImageData
 import tutorial.webapp.Font.Font
 
 import scala.collection.immutable.IndexedSeq
-import scala.collection.mutable
 
 /**
   * Created by enrico on 9/3/16.
   */
-class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
-  private val sCellSize = s"${cellSize}px".intern()
+class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin : Int, width : Int, height : Int) {
   private val matrix = new Array[Array[String]](height)
 
-  val black = "000000"
+  val black = "black"
 
   for (y <- 0 until height)
     matrix(y) = new Array[String](width)
 
   clear()
 
-  def show() : ReactTag = {
-    var list = new mutable.MutableList[ReactTag]
+//  val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
+//  offscreenCanvas.width = width * (cellSize + margin)
+//  offscreenCanvas.height = height * (cellSize + margin)
+//  val offScreenContext = offscreenCanvas.getContext("2d")
+
+  def show() {
       for ( y <- 0 until height )
         for ( x <- 0 until width )
-          list += square(x * (cellSize + margin), y * (cellSize + margin), matrix(y)(x))
-    <.div(list)
+          square(ctx, x * (cellSize + margin), y * (cellSize + margin), matrix(y)(x))
+//    var image = offScreenContext.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).asInstanceOf[ImageData]
+//    ctx.putImageData(image, 0, 0)
   }
 
   def clear() : Unit = {
@@ -65,14 +70,9 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
         if (map(iy)(ix)) set(x + ix, y + iy, color)
   }
 
-  private def square(x: Int, y: Int, color: String) : ReactTag = {
-    <.div(^.backgroundColor := "#" + color
-      , ^.width := sCellSize
-      , ^.height := sCellSize
-      , ^.position := "absolute"
-      , ^.left := x + "px"
-      , ^.top := y + "px"
-    )
+  private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: String) {
+    ctx.fillStyle = color
+    ctx.fillRect(x, y, cellSize, cellSize)
   }
 
 }

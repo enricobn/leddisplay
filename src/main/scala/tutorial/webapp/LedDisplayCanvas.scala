@@ -18,15 +18,18 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
                        onColor: String) {
   import LedDisplayCanvas._
 
-  private val matrix = new Array[Array[Double]](height)
+  private val matrix = new Array[Array[Boolean]](height)
+  private val screen = new Array[Array[Double]](height)
   private val halfCellSize: Int = cellSize / 2
   private val offColorCoeff = 0.2
   private val offColor = deriveColor(onColor, offColorCoeff)
   private val onColorColor = Color(onColor)
   private var changed = false
 
-  for (y <- 0 until height)
-    matrix(y) = new Array[Double](width)
+  for (y <- 0 until height) {
+    matrix(y) = new Array[Boolean](width)
+    screen(y) = new Array[Double](width)
+  }
 
   clear()
 
@@ -36,6 +39,21 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
 //  val offScreenContext = offscreenCanvas.getContext("2d")
 
   def show() {
+    for ( y <- 0 until height )
+      for ( x <- 0 until width ) {
+        val oldValue = screen(y)(x)
+        val newValue =
+          if (matrix(y)(x)) {
+            1
+          } else {
+            Math.max(screen(y)(x) * 0.7, offColorCoeff)
+          }
+        if (oldValue != newValue) {
+          changed = true
+          screen(y)(x) = newValue
+        }
+      }
+
     if (!changed) return
 
     ctx.fillStyle = "black"
@@ -43,7 +61,7 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
 
     for ( y <- 0 until height )
       for ( x <- 0 until width )
-        square(ctx, x * (cellSize + margin), y * (cellSize + margin), matrix(y)(x))
+        square(ctx, x * (cellSize + margin), y * (cellSize + margin), screen(y)(x))
 
     changed = false
 //    var image = offScreenContext.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).asInstanceOf[ImageData]
@@ -53,13 +71,13 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
   def clear() : Unit = {
     for ( y <- 0 until height )
       for ( x <- 0 until width )
-        matrix(y)(x) = offColorCoeff
+        matrix(y)(x) = false
 
     changed = true
   }
 
-  private def set(x: Int, y: Int, color: Double) : Unit = {
-    matrix(y)(x) = color
+  private def set(x: Int, y: Int, active: Boolean) : Unit = {
+    matrix(y)(x) = active
   }
 
   private def print(x: Int, y: Int, c: Char, font: Font) : Unit = {
@@ -79,26 +97,10 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
     for ( y <- 0 until height )
       for ( x <- 0 until width) {
         val actualValue = matrix(y)(x)
-        val newValue: Double = if (x == width - 1) offColorCoeff else matrix(y)(x + 1)
+        val newValue = if (x == width - 1) false else matrix(y)(x + 1)
 
         if (actualValue != newValue) {
-          matrix(y)(x) =
-            if (newValue == 1) {
-              1
-            } else if (actualValue < offColorCoeff) {
-              offColorCoeff
-            } else {
-              actualValue * 0.8
-            }
-
-          if (x < width - 1) {
-            matrix(y)(x + 1) =
-              if (newValue < offColorCoeff) {
-                offColorCoeff
-              } else {
-                newValue * 0.8
-              }
-          }
+          matrix(y)(x) = newValue
           changed = true
         }
       }
@@ -111,7 +113,7 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
   private def print(x: Int, y: Int, map: Array[IndexedSeq[Boolean]], font: Font) : Unit = {
     for (iy <- map.indices)
       for (ix <- map(iy).indices)
-        if (map(iy)(ix)) set(x + ix, y + iy, 1)
+        if (map(iy)(ix)) set(x + ix, y + iy, true)
   }
 
   private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: Double) {

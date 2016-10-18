@@ -19,7 +19,6 @@ object TutorialAppCanvas {
 
     val display = new LedDisplayCanvas(ctx, cellSize = 10, margin = 1, width = 120, height = 8, onColor = "#ff0000")
 
-
     def loop : (Double) => Unit = (time: Double) => {
       display.scrollLeft()
       display.show()

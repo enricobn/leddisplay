@@ -2,6 +2,7 @@ package tutorial.webapp
 
 import org.scalajs.dom
 import org.scalajs.dom.ext.Color
+import org.scalajs.dom.html
 import tutorial.webapp.Font.Font
 
 import scala.collection.immutable.IndexedSeq
@@ -14,7 +15,7 @@ object LedDisplayCanvas {
   val PI2 = 2 * Math.PI
 }
 
-class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin : Int, width : Int, height : Int,
+class LedDisplayCanvas(canvas: html.Canvas, cellSize : Int, margin : Int, width : Int, height : Int,
                        onColor: String) {
   import LedDisplayCanvas._
 
@@ -25,6 +26,11 @@ class LedDisplayCanvas(ctx: dom.CanvasRenderingContext2D, cellSize : Int, margin
   private val offColor = deriveColor(onColor, offColorCoeff)
   private val onColorColor = Color(onColor)
   private var changed = false
+
+  canvas.width = width * (cellSize + margin)
+  canvas.height = height * (cellSize + margin)
+
+  val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
   for (y <- 0 until height) {
     matrix(y) = new Array[Boolean](width)

@@ -15,9 +15,7 @@ object TutorialAppCanvas {
 
   @JSExport
   def main(canvas: html.Canvas) : Unit = {
-    val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-
-    val display = new LedDisplayCanvas(ctx, cellSize = 10, margin = 1, width = 120, height = 8, onColor = "#ff0000")
+    val display = new LedDisplayCanvas(canvas, cellSize = 10, margin = 1, width = 120, height = 8, onColor = "#ff0000")
 
     def loop : (Double) => Unit = (time: Double) => {
       display.scrollLeft()

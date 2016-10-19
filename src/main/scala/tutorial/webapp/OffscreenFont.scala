@@ -31,8 +31,8 @@ class OffscreenFont {
 
   val image = dom.document.createElement("img").asInstanceOf[HTMLImageElement]
   dom.document.body.appendChild(offscreenCanvas)
-  image.width = 8 * 16
-  image.height = 8 * 16
+//  image.width = 8 * 16
+//  image.height = 8 * 16
   image.onload = { evt: Event => {
     offScreenContext.drawImage(image, 0, 0, 8 * 16, 8 * 16)
     getFonts
@@ -49,26 +49,21 @@ class OffscreenFont {
   def getFonts : OFonts =  {
     val data = offScreenContext.getImageData(0, 0, 8 * 16 , 8 * 16).data
 
-    val startOf0 = 8//48 * 8 * 8
+    val reader = new FontImageReader(data, 8, 16)
 
     var s = ""
     for (y <- 0 until 8) {
       for (x <- 0 until 8) {
-        val pos = startOf0 + y * 8 * 16 + x * 4 + 1
-        if (data(pos) == 255) {
+        if (reader.readPixel(16, y, x)) {
           s += "1"
         } else {
-          s += "0"
+          s += " "
         }
       }
       s += "\n"
     }
 
     dom.console.log(s)
-
-    val reader = new FontImageReader(data, 8, 16)
-
-    val p = reader.readPixel(48, 0, 0)
 
     val fonts = reader.read()
 
@@ -158,7 +153,7 @@ class OFont {
     var s = ""
     for (y <- data.indices) {
       for (x <- data(y).indices)
-        if (data(y)(x)) s += "1" else s += "0"
+        if (data(y)(x)) s += "1" else s += " "
       s += "\n"
     }
     s

@@ -59,7 +59,7 @@ class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int) 
     ((char / columns) * columns * charSize * charSize + (char % columns) * charSize + y * columns * charSize + x) * 4
 
   def read() : Font = {
-    val fonts = new OffsetFontImpl(charSize)
+    val fonts = new OffscreenFontImpl(charSize)
 
     var i = 0
     var x = 0
@@ -118,7 +118,7 @@ trait CharFont {
 
 }
 
-class OffsetCharFontImpl() extends CharFont {
+class OffscreenCharFontImpl() extends CharFont {
   val data = new mutable.ArrayBuffer[mutable.ArrayBuffer[Boolean]]()
 
   def set(y: Int, x: Int, value: Boolean): Unit = {
@@ -152,13 +152,13 @@ trait Font {
 
 }
 
-class OffsetFontImpl(val size: Int) extends Font {
+class OffscreenFontImpl(val size: Int) extends Font {
   val data = new mutable.HashMap[Char, CharFont]()
 
   def get(c: Char) : CharFont = {
     var font: CharFont = null
     if (!data.contains(c)) {
-      font = new OffsetCharFontImpl()
+      font = new OffscreenCharFontImpl()
       data(c) = font
     } else {
       font = data(c)

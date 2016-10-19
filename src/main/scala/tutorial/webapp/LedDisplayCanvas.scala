@@ -42,7 +42,10 @@ class LedDisplayCanvas(canvas: html.Canvas, cellSize : Int, margin : Int, width 
 //  val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
 //  offscreenCanvas.width = width * (cellSize + margin)
 //  offscreenCanvas.height = height * (cellSize + margin)
-//  val offScreenContext = offscreenCanvas.getContext("2d")
+//  val offScreenContext = offscreenCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+//  offScreenContext.fillStyle = "white"
+//  offScreenContext.fillText("0", 0, 0)
+//  val imageData = offScreenContext.getImageData(0, 0, 100, 100).data
 
   def show() {
     for ( y <- 0 until height )

@@ -15,6 +15,7 @@ object TutorialAppCanvas {
 
   @JSExport
   def main(canvas: html.Canvas) : Unit = {
+    new OffscreenFont
     val display = new LedDisplayCanvas(canvas, cellSize = 10, margin = 1, width = 120, height = 8, onColor = "#ff0000")
 
     def loop : (Double) => Unit = (time: Double) => {
@@ -26,7 +27,7 @@ object TutorialAppCanvas {
       }
     }
 
-    Font.readFont("font.json", font => {
+    Font.readFont("src/web/font.json", font => {
           Array.range(0, 1).foreach(y => {
             display.print(0, y * 8, "010101001011", font)
           })

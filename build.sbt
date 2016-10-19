@@ -35,5 +35,7 @@ jsDependencies ++= Seq(
     commonJSName "ReactDOMServer")
 
 // JSON
-
 libraryDependencies += "com.lihaoyi" %%% "upickle" % "0.4.1"
+// TEST
+libraryDependencies += "com.lihaoyi" %%% "utest" % "0.4.3" % "test"
+testFrameworks += new TestFramework("utest.runner.Framework")

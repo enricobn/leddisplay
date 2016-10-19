@@ -51,7 +51,7 @@ class OffscreenFont {
   def getFonts : OFonts =  {
     val data = offScreenContext.getImageData(0, 0, 8 * 16 , 8 * 16).data
 
-    val reader = new FontImageReader(data)
+    val reader = new FontImageReader(data, 8, 16)
 
     val fonts = reader.read()
 
@@ -62,7 +62,7 @@ class OffscreenFont {
 
 }
 
-class FontImageReader(data: scalajs.js.Array[Int]) {
+class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int) {
 
   def read() : OFonts = {
     val fonts = new OFonts
@@ -91,16 +91,16 @@ class FontImageReader(data: scalajs.js.Array[Int]) {
       i += 4
       if (i < data.length) {
         x += 1
-        if (x == 8) {
+        if (x == charSize) {
           x = 0
           ich += 1
-          if (ich % 16 == 0) {
+          if (ich % columns == 0) {
             y += 1
-            if (y == 8) {
+            if (y == charSize) {
               y = 0
-              ich = (ich / 16) * 16
+              ich = (ich / columns) * columns
             } else {
-              ich = (ich / 16 - 1) * 16
+              ich = (ich / columns - 1) * columns
             }
 //            if (!ch.isControl) {
 //              dom.console.log(ich)

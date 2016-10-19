@@ -67,7 +67,7 @@ object TutorialAppReact extends JSApp {
       .componentWillUnmount(_.backend.clear)
       .build
 
-    Font.readFont("src/web/font.json", font => {
+    TextFont.readFont("src/web/font.json", font => {
       Array.range(0, 3).foreach(y =>
         display.print(0, y * 8, "0101010", font, "00ff00")
       )

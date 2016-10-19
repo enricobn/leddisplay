@@ -10,66 +10,40 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by enrico on 10/18/16.
   */
-class OffscreenFont {
-//  var str = ""
-//  for (i <- 0 to 255) {
-//    val c = i.asInstanceOf[Char]
-//    if (!c.isControl) {
-//      str += c
-//    }
-//  }
+object Font {
 
-  val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
-  offscreenCanvas.width = 8 * 16
-  offscreenCanvas.height = 8 * 16
-  val offScreenContext = offscreenCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-//  offScreenContext.fillStyle = "black"
-//  offScreenContext.fillRect(0, 0, 10 * str.length, 10)
-//  offScreenContext.fillStyle = "white"
-//  offScreenContext.font = "10px Monospace"
+  def readFont(onSuccess: (Font) => Unit): Unit = {
+    //  var str = ""
+    //  for (i <- 0 to 255) {
+    //    val c = i.asInstanceOf[Char]
+    //    if (!c.isControl) {
+    //      str += c
+    //    }
+    //  }
 
-
-  val image = dom.document.createElement("img").asInstanceOf[HTMLImageElement]
-  dom.document.body.appendChild(offscreenCanvas)
-//  image.width = 8 * 16
-//  image.height = 8 * 16
-  image.onload = { evt: Event => {
-    offScreenContext.drawImage(image, 0, 0, 8 * 16, 8 * 16)
-    getFonts
-  }}
-  image.src = "src/web/08x08_DOS437_unknown.png"
+    val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
+    offscreenCanvas.width = 8 * 16
+    offscreenCanvas.height = 8 * 16
+    val offScreenContext = offscreenCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+    //  offScreenContext.fillStyle = "black"
+    //  offScreenContext.fillRect(0, 0, 10 * str.length, 10)
+    //  offScreenContext.fillStyle = "white"
+    //  offScreenContext.font = "10px Monospace"
 
 
-  /*for (i <- str.indices) {
-    offScreenContext.fillText(str.charAt(i).toString, i * 10 + 1, 9)
-  }
-  */
-//  offScreenContext.fillText(str, 0, 9)
+    val image = dom.document.createElement("img").asInstanceOf[HTMLImageElement]
+//    dom.document.body.appendChild(offscreenCanvas)
+    image.onload = { evt: Event => {
+      offScreenContext.drawImage(image, 0, 0, 8 * 16, 8 * 16)
+      val data = offScreenContext.getImageData(0, 0, 8 * 16 , 8 * 16).data
+      val reader = new FontImageReader(data, 8, 16)
+      val fonts = reader.read()
+      onSuccess.apply(fonts)
+    }}
+    image.src = "src/web/08x08_DOS437_unknown.png"
 
-  def getFonts : OFonts =  {
-    val data = offScreenContext.getImageData(0, 0, 8 * 16 , 8 * 16).data
+    //  offScreenContext.fillText(str, 0, 9)
 
-    val reader = new FontImageReader(data, 8, 16)
-
-    var s = ""
-    for (y <- 0 until 8) {
-      for (x <- 0 until 8) {
-        if (reader.readPixel(16, y, x)) {
-          s += "1"
-        } else {
-          s += " "
-        }
-      }
-      s += "\n"
-    }
-
-    dom.console.log(s)
-
-    val fonts = reader.read()
-
-    dom.console.log(fonts.get('0').toString)
-
-    fonts
   }
 
 }
@@ -84,8 +58,8 @@ class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int) 
   def pixelOffset(char: Int, y: Int, x: Int) : Int =
     ((char / columns) * columns * charSize * charSize + (char % columns) * charSize + y * columns * charSize + x) * 4
 
-  def read() : OFonts = {
-    val fonts = new OFonts
+  def read() : Font = {
+    val fonts = new OffsetFontImpl(charSize)
 
     var i = 0
     var x = 0
@@ -137,7 +111,14 @@ class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int) 
   }
 }
 
-class OFont {
+trait CharFont {
+  def set(y: Int, x: Int, value: Boolean)
+
+  def get(y: Int, x: Int) : Boolean
+
+}
+
+class OffsetCharFontImpl() extends CharFont {
   val data = new mutable.ArrayBuffer[mutable.ArrayBuffer[Boolean]]()
 
   def set(y: Int, x: Int, value: Boolean): Unit = {
@@ -159,15 +140,25 @@ class OFont {
     s
   }
 
+  override def get(y: Int, x: Int): Boolean = data(y)(x)
+
 }
 
-class OFonts {
-  val data = new mutable.HashMap[Char, OFont]()
+trait Font {
 
-  def get(c: Char) : OFont = {
-    var font: OFont = null
+  def get(c: Char) : CharFont
+
+  def size: Int
+
+}
+
+class OffsetFontImpl(val size: Int) extends Font {
+  val data = new mutable.HashMap[Char, CharFont]()
+
+  def get(c: Char) : CharFont = {
+    var font: CharFont = null
     if (!data.contains(c)) {
-      font = new OFont()
+      font = new OffsetCharFontImpl()
       data(c) = font
     } else {
       font = data(c)

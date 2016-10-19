@@ -15,8 +15,7 @@ object TutorialAppCanvas {
 
   @JSExport
   def main(canvas: html.Canvas) : Unit = {
-    new OffscreenFont
-    val display = new LedDisplayCanvas(canvas, cellSize = 10, margin = 1, width = 120, height = 8, onColor = "#ff0000")
+    val display = new LedDisplayCanvas(canvas, cellSize = 10, margin = 1, width = 120, height = 10, onColor = "#ff0000")
 
     def loop : (Double) => Unit = (time: Double) => {
       display.scrollLeft()
@@ -27,17 +26,18 @@ object TutorialAppCanvas {
       }
     }
 
-    Font.readFont("src/web/font.json", font => {
-          Array.range(0, 1).foreach(y => {
-            display.print(0, y * 8, "010101001011", font)
-          })
+    Font.readFont(font => {
+//    TextFont.readFont("src/web/font.json", font => {
+        Array.range(0, 1).foreach(y => {
+          display.print(0, y * 8 + 1, "Pippo de pippis", font)
+        })
 
-          display.show()
+        display.show()
 
-          setTimeout(TIMEOUT) {
-            loop.apply(0)
-          }
+        setTimeout(TIMEOUT) {
+          loop.apply(0)
         }
+      }
     )
 
   }

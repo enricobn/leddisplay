@@ -1,9 +1,7 @@
 package tutorial.webapp
 
 import japgolly.scalajs.react.vdom.prefix_<^._
-import tutorial.webapp.Font.Font
 
-import scala.collection.immutable.IndexedSeq
 import scala.collection.mutable
 
 /**
@@ -39,14 +37,14 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
   }
 
   def print(x: Int, y: Int, c: Char, font: Font, color: String) : Unit = {
-    val charFont = font.find(_.char.charAt(0) == c)
+    val charFont = font.get(c)
 
-    charFont.foreach(cf => print(x, y, toArray(cf), font, color))
+    print(x, y, charFont, font.size, color)
   }
 
   def print(x: Int, y: Int, s: String, font: Font, color: String) : Unit = {
     for (ix <- s.indices)
-      print(x + ix * 8, y, s.charAt(ix), font, color)
+      print(x + ix * font.size, y, s.charAt(ix), font, color)
   }
 
   def scrollLeft() : Unit = {
@@ -55,14 +53,10 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
         matrix(y)(x) = if (x == width -1) black else matrix(y)(x + 1)
   }
 
-  private def toArray(charFont: CharFont) : Array[IndexedSeq[Boolean]] = {
-    charFont.bitmap.map(row => row.map(ch => ch == '1'))
-  }
-
-  private def print(x: Int, y: Int, map: Array[IndexedSeq[Boolean]], font: Font, color: String) : Unit = {
-    for (iy <- map.indices)
-      for (ix <- map(iy).indices)
-        if (map(iy)(ix)) set(x + ix, y + iy, color)
+  private def print(x: Int, y: Int, charFont: CharFont, size: Int, color: String) : Unit = {
+    for (iy <- 0 until size)
+      for (ix <- 0 until size)
+        if (charFont.get(iy, ix)) set(x + ix, y + iy, color)
   }
 
   private def square(x: Int, y: Int, color: String) : ReactTag = {

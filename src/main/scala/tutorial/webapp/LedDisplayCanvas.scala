@@ -3,7 +3,6 @@ package tutorial.webapp
 import org.scalajs.dom
 import org.scalajs.dom.ext.Color
 import org.scalajs.dom.html
-import tutorial.webapp.Font.Font
 
 import scala.collection.immutable.IndexedSeq
 
@@ -90,14 +89,14 @@ class LedDisplayCanvas(canvas: html.Canvas, cellSize : Int, margin : Int, width 
   }
 
   private def print(x: Int, y: Int, c: Char, font: Font) : Unit = {
-    val charFont = font.find(_.char.charAt(0) == c)
+    val charFont = font.get(c)
 
-    charFont.foreach(cf => print(x, y, toArray(cf), font))
+    print(x, y, charFont, font)
   }
 
   def print(x: Int, y: Int, s: String, font: Font) : Unit = {
     for (ix <- s.indices)
-      print(x + ix * 8, y, s.charAt(ix), font)
+      print(x + ix * font.size, y, s.charAt(ix), font)
 
     changed = true
   }
@@ -115,14 +114,10 @@ class LedDisplayCanvas(canvas: html.Canvas, cellSize : Int, margin : Int, width 
       }
   }
 
-  private def toArray(charFont: CharFont) : Array[IndexedSeq[Boolean]] = {
-    charFont.bitmap.map(row => row.map(ch => ch == '1'))
-  }
-
-  private def print(x: Int, y: Int, map: Array[IndexedSeq[Boolean]], font: Font) : Unit = {
-    for (iy <- map.indices)
-      for (ix <- map(iy).indices)
-        if (map(iy)(ix)) set(x + ix, y + iy, true)
+  private def print(x: Int, y: Int, charFont: CharFont, font: Font) : Unit = {
+    for (iy <- 0 until font.size)
+      for (ix <- 0 until font.size)
+        if (charFont.get(iy, ix)) set(x + ix, y + iy, true)
   }
 
   private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: Double) {

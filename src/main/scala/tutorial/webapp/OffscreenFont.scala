@@ -11,19 +11,17 @@ import scala.collection.mutable.ArrayBuffer
   * Created by enrico on 10/18/16.
   */
 class OffscreenFont {
-  var str = ""
-  for (i <- 0 to 255) {
-    val c = i.asInstanceOf[Char]
-    if (!c.isControl) {
-      str += c
-    }
-  }
-
-  str = "01"
+//  var str = ""
+//  for (i <- 0 to 255) {
+//    val c = i.asInstanceOf[Char]
+//    if (!c.isControl) {
+//      str += c
+//    }
+//  }
 
   val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
-  offscreenCanvas.width = 8 * 16 //10 * str.length
-  offscreenCanvas.height = 8 * 16//10
+  offscreenCanvas.width = 8 * 16
+  offscreenCanvas.height = 8 * 16
   val offScreenContext = offscreenCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 //  offScreenContext.fillStyle = "black"
 //  offScreenContext.fillRect(0, 0, 10 * str.length, 10)
@@ -51,7 +49,26 @@ class OffscreenFont {
   def getFonts : OFonts =  {
     val data = offScreenContext.getImageData(0, 0, 8 * 16 , 8 * 16).data
 
+    val startOf0 = 8//48 * 8 * 8
+
+    var s = ""
+    for (y <- 0 until 8) {
+      for (x <- 0 until 8) {
+        val pos = startOf0 + y * 8 * 16 + x * 4 + 1
+        if (data(pos) == 255) {
+          s += "1"
+        } else {
+          s += "0"
+        }
+      }
+      s += "\n"
+    }
+
+    dom.console.log(s)
+
     val reader = new FontImageReader(data, 8, 16)
+
+    val p = reader.readPixel(48, 0, 0)
 
     val fonts = reader.read()
 
@@ -63,6 +80,14 @@ class OffscreenFont {
 }
 
 class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int) {
+
+  def readPixel(char: Int, y: Int, x: Int) : Boolean = {
+    val pos = pixelOffset(char, y, x)
+    data(pos + 1) == 255
+  }
+
+  def pixelOffset(char: Int, y: Int, x: Int) : Int =
+    ((char / columns) * columns * charSize * charSize + (char % columns) * charSize + y * columns * charSize + x) * 4
 
   def read() : OFonts = {
     val fonts = new OFonts

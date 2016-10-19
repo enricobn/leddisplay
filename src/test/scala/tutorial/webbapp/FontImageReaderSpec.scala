@@ -32,7 +32,7 @@ object FontImageReaderSpec extends TestSuite {
   add(data, '0') // 56  3 1 0
   add(data, '1') // 60  3 1 1
 
-  val reader = new FontImageReader(data, 2, 2)
+  val reader = new FontImageReader(data, 2, 2, (r, g, b, a) => g == 255)
 
   def tests = TestSuite {
     'read {

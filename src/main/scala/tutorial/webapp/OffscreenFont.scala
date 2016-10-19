@@ -36,7 +36,7 @@ object Font {
     image.onload = { evt: Event => {
       offScreenContext.drawImage(image, 0, 0, 8 * 16, 8 * 16)
       val data = offScreenContext.getImageData(0, 0, 8 * 16 , 8 * 16).data
-      val reader = new FontImageReader(data, 8, 16)
+      val reader = new FontImageReader(data, 8, 16, (r, g, b, a) => g == 255)
       val fonts = reader.read()
       onSuccess.apply(fonts)
     }}
@@ -48,11 +48,11 @@ object Font {
 
 }
 
-class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int) {
+class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int, onPixel: (Int, Int, Int, Int) => Boolean) {
 
   def readPixel(char: Int, y: Int, x: Int) : Boolean = {
     val pos = pixelOffset(char, y, x)
-    data(pos + 1) == 255
+    onPixel(data(pos), data(pos + 1), data(pos + 2), data(pos + 3))
   }
 
   def pixelOffset(char: Int, y: Int, x: Int) : Int =
@@ -70,7 +70,7 @@ class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int) 
 //    dom.console.log(data.length)
 
     while (i < data.length) {
-      val value = data(i) == 255 && data(i + 1) == 255 && data(i + 2) == 255
+      val value = onPixel(data(i), data(i + 1), data(i + 2), data(i + 3))
 
       if (!ch.isControl) {
 //        dom.console.log(ch + ": " + value)

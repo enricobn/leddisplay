@@ -15,7 +15,7 @@ class LedDisplayManager(div: html.Div, timeout: Int = 50) {
   var scrollingText = ""
   var scrollingTextOffset = 0
 
-  val display = new LedDisplayCanvas(div, cellSize = 10, margin = 1, width = 120, height = 10, onColor = "#ff0000")
+  val display = new LedDisplayCanvas(div, cellSize = 10, margin = 1, width = 120, height = 10, color = "#ff0000")
   var font: Font = null
 
   Font.readFont(font => {

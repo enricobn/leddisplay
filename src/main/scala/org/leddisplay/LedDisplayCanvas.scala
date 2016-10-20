@@ -14,21 +14,20 @@ object LedDisplayCanvas {
 }
 
 class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, val width : Int, val height : Int,
-                       val onColor: String) {
+                       val color: String) {
   import LedDisplayCanvas._
 
   private val matrix = new Array[Array[Boolean]](height)
   private val screen = new Array[Array[Int]](height)
   private val halfCellSize: Int = cellSize / 2
-  private val onColorColor = Color(onColor)
-  private var changed = false
   private val colors =
     Array[String](
-      deriveColor(onColor, 0.20),
-      deriveColor(onColor, 0.50),
-      deriveColor(onColor, 0.75),
-      onColorColor.toString()
+      deriveColor(color, 0.20),
+      deriveColor(color, 0.50),
+      deriveColor(color, 0.75),
+      color
     )
+  private var changed = false
 
   for (y <- 0 until height) {
     matrix(y) = new Array[Boolean](width)

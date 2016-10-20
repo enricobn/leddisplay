@@ -10,12 +10,29 @@ import scala.scalajs.js.timers._
   * Created by enrico on 10/20/16.
   */
 @JSExport
-class LedDisplayManager(div: html.Div, timeout: Int = 50) {
+class LedDisplayConfig() {
+  @JSExport var cellSize: Int = 10
+
+  @JSExport var margin: Int = 1
+
+  @JSExport var width: Int = 100
+
+  @JSExport var height: Int = 10
+
+  @JSExport var color: String = "#ff0000"
+
+  @JSExport var timeout: Int = 50
+
+}
+
+@JSExport
+class LedDisplayManager(div: html.Div, config: LedDisplayConfig = new LedDisplayConfig) {
   var scrolling = false
   var scrollingText = ""
   var scrollingTextOffset = 0
 
-  val display = new LedDisplayCanvas(div, cellSize = 10, margin = 1, width = 120, height = 10, color = "#ff0000")
+  val display = new LedDisplayCanvas(div, cellSize = config.cellSize, margin = config.margin, width = config.width,
+    height = config.height, color = config.color)
   var font: Font = null
 
   Font.readFont(font => {
@@ -23,7 +40,7 @@ class LedDisplayManager(div: html.Div, timeout: Int = 50) {
 
     display.show()
 
-    setTimeout(timeout) {
+    setTimeout(config.timeout) {
       loop.apply(0)
     }
   })
@@ -36,7 +53,7 @@ class LedDisplayManager(div: html.Div, timeout: Int = 50) {
   @JSExport
   def setText(text: String): Unit = {
     if (font == null) {
-      setTimeout(timeout) {
+      setTimeout(config.timeout) {
         setText(text)
       }
     } else {
@@ -49,7 +66,7 @@ class LedDisplayManager(div: html.Div, timeout: Int = 50) {
   @JSExport
   def addText(text: String): Unit = {
     if (font == null) {
-      setTimeout(timeout) {
+      setTimeout(config.timeout) {
         addText(text)
       }
     } else {
@@ -81,7 +98,7 @@ class LedDisplayManager(div: html.Div, timeout: Int = 50) {
     }
     display.show()
 
-    setTimeout(timeout) {
+    setTimeout(config.timeout) {
       dom.window.requestAnimationFrame(loop)
     }
   }

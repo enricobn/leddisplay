@@ -13,7 +13,16 @@
         <div id="ledDisplay"></div>
 
         <script type="text/javascript">
-          var displayManager = new org.leddisplay.LedDisplayManager(document.getElementById('ledDisplay'));
+          var displayConfig = new org.leddisplay.LedDisplayConfig();
+          displayConfig.cellSize = 10;
+          displayConfig.margin = 1;
+          displayConfig.width = 100;
+          displayConfig.height = 10;
+          displayConfig.color = "#ff0000";
+          displayConfig.timeout = 50;
+
+          var displayManager = new org.leddisplay.LedDisplayManager(document.getElementById('ledDisplay'), displayConfig);
+
           displayManager.addText("This is a led display component written in Scala.js.");
           displayManager.setScrolling(true);
           //tutorial.webapp.TutorialAppReact().main();

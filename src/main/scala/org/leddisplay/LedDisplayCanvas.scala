@@ -154,12 +154,12 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
 
   private def square(ctx: CanvasRenderingContext2D, x: Int, y: Int, color: Int) {
     ctx.fillStyle = colors(color)
-    ctx.fillRect(x, y, cellSize + 1, cellSize + 1)
+    ctx.fillRect(x, y, cellSize + margin, cellSize + margin)
   }
 
   private def fillCircle(ctx: CanvasRenderingContext2D, x: Int, y: Int): Unit = {
     ctx.beginPath()
-    ctx.arc(x + halfCellSize + 1, y + halfCellSize + 1, halfCellSize, 0, PI2, false)
+    ctx.arc(x + halfCellSize + margin, y + halfCellSize + margin, halfCellSize, 0, PI2, false)
     ctx.fill()
     ctx.stroke()
   }

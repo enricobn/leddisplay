@@ -1,7 +1,11 @@
+COMPILE
+--------
 call sbt ~fastOptJS (in IntelliJ make an sbt run configuration with task ~fastOptJS)
+
+RUN
+----
 open index.html
 
 CREDITS
 --------
-- raster font
-  https://github.com/idispatch/raster-fonts/blob/master/08x08_DOS437_unknown.png
+- raster font from https://github.com/idispatch/raster-fonts/blob/master/08x08_DOS437_unknown.png

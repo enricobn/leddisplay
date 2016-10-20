@@ -20,6 +20,8 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
   private val matrix = new Array[Array[Boolean]](height)
   private val screen = new Array[Array[Int]](height)
   private val halfCellSize: Int = cellSize / 2
+  private val displayWidth: Int = width * (cellSize + margin)
+  private val displayHeight: Int = height * (cellSize + margin)
   private val colors =
     Array[String](
       deriveColor(color, 0.20),
@@ -36,9 +38,8 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
 
   clear()
 
-  div.style.width = width * (cellSize + margin) + "px"
-  div.style.height = (height * (cellSize + margin)) + "px"
-//  div.style.display = "block"
+  div.style.width = displayWidth + "px"
+  div.style.height = displayHeight + "px"
 
   val ctx = createContext()
 
@@ -114,8 +115,8 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
     canvas.style.top = div.style.top //"0"
     div.appendChild(canvas)
 
-    canvas.width = width * (cellSize + margin)
-    canvas.height = height * (cellSize + margin)
+    canvas.width = displayWidth
+    canvas.height = displayHeight
 
     canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
   }
@@ -128,13 +129,13 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
     maskCavas.style.top = div.style.top //"0"
     div.appendChild(maskCavas)
 
-    maskCavas.width = width * (cellSize + margin)
-    maskCavas.height = height * (cellSize + margin)
+    maskCavas.width = displayWidth
+    maskCavas.height = displayHeight
 
     val maskContext = maskCavas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
 
     maskContext.fillStyle = "black"
-    maskContext.fillRect(0, 0, width * (cellSize + margin) + margin, height * (cellSize + margin) + margin)
+    maskContext.fillRect(0, 0, displayWidth + margin, displayHeight + margin)
 
     maskContext.globalCompositeOperation = "destination-out"
     for (y <- 0 until height)

@@ -13,7 +13,9 @@
     <canvas style="display: block" id="canvas"></canvas>
 </div>
 <script type="text/javascript">
-  tutorial.webapp.TutorialAppCanvas().main(document.getElementById('canvas'));
+  var displayManager = new tutorial.webapp.LedDisplayManager(document.getElementById('canvas'));
+  displayManager.setText("Pippo de pippis");
+  displayManager.setScrolling(true);
   //tutorial.webapp.TutorialAppReact().main();
 </script>
 </body>

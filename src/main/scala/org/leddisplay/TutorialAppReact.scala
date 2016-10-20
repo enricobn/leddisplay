@@ -1,4 +1,4 @@
-package tutorial.webapp
+package org.leddisplay
 
 import japgolly.scalajs.react.vdom.prefix_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, ReactComponentB, ReactDOM}

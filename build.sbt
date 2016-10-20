@@ -1,4 +1,4 @@
-name := "led_display"
+name := "leddisplay"
 
 version := "1.0"
 

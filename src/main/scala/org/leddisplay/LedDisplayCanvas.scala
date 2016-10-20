@@ -1,4 +1,4 @@
-package tutorial.webapp
+package org.leddisplay
 
 import org.scalajs.dom
 import org.scalajs.dom.ext.Color

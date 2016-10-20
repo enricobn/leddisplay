@@ -1,6 +1,5 @@
-package tutorial.webbapp
+package org.leddisplay
 
-import tutorial.webapp.FontImageReader
 import utest._
 
 /**

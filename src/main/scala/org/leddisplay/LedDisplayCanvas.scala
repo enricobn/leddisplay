@@ -4,8 +4,6 @@ import org.scalajs.dom
 import org.scalajs.dom.ext.Color
 import org.scalajs.dom.html
 
-import scala.collection.immutable.IndexedSeq
-
 /**
   * Created by enrico on 9/3/16.
   */
@@ -19,12 +17,17 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
   import LedDisplayCanvas._
 
   private val matrix = new Array[Array[Boolean]](height)
-  private val screen = new Array[Array[Double]](height)
+  private val screen = new Array[Array[Int]](height)
   private val halfCellSize: Int = cellSize / 2
-  private val offColorCoeff = 0.2
-  private val offColor = deriveColor(onColor, offColorCoeff)
   private val onColorColor = Color(onColor)
   private var changed = false
+  private val colors = Array[String](
+    deriveColor(onColor, 0.2),
+    deriveColor(onColor, 0.4),
+    deriveColor(onColor, 0.6),
+    deriveColor(onColor, 0.8),
+    onColorColor.toString()
+  )
 
   canvas.width = width * (cellSize + margin)
   canvas.height = height * (cellSize + margin)
@@ -33,7 +36,7 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
 
   for (y <- 0 until height) {
     matrix(y) = new Array[Boolean](width)
-    screen(y) = new Array[Double](width)
+    screen(y) = new Array[Int](width)
   }
 
   clear()
@@ -52,9 +55,9 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
         val oldValue = screen(y)(x)
         val newValue =
           if (matrix(y)(x)) {
-            1
+            4
           } else {
-            Math.max(screen(y)(x) * 0.7, offColorCoeff)
+            Math.max(screen(y)(x) -1, 0)
           }
         if (oldValue != newValue) {
           changed = true
@@ -123,8 +126,8 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
         if (charFont.get(iy, ix)) set(x + ix, y + iy, true)
   }
 
-  private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: Double) {
-    ctx.fillStyle = deriveColor(onColorColor, color)
+  private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: Int) {
+    ctx.fillStyle = colors(color)
 //    ctx.fillRect(x, y, cellSize, cellSize)
     fillCircle(ctx, x, y)
   }

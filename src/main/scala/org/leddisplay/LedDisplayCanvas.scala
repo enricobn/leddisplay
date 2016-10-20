@@ -2,7 +2,8 @@ package org.leddisplay
 
 import org.scalajs.dom
 import org.scalajs.dom.ext.Color
-import org.scalajs.dom.html
+import org.scalajs.dom.{CanvasRenderingContext2D, html}
+import org.scalajs.dom.html.Canvas
 
 /**
   * Created by enrico on 9/3/16.
@@ -21,24 +22,13 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
   private val halfCellSize: Int = cellSize / 2
   private val onColorColor = Color(onColor)
   private var changed = false
-  private val colors = Array[String](
-    deriveColor(onColor, 0.20),
-    deriveColor(onColor, 0.50),
-    deriveColor(onColor, 0.75),
-    onColorColor.toString()
-  )
-
-  val canvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
-  canvas.style.zIndex = "0"
-  canvas.style.position = "absolute"
-  canvas.style.left = "0"
-  canvas.style.top = "0"
-  div.appendChild(canvas)
-
-  canvas.width = width * (cellSize + margin)
-  canvas.height = height * (cellSize + margin)
-
-  val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  private val colors =
+    Array[String](
+      deriveColor(onColor, 0.20),
+      deriveColor(onColor, 0.50),
+      deriveColor(onColor, 0.75),
+      onColorColor.toString()
+    )
 
   for (y <- 0 until height) {
     matrix(y) = new Array[Boolean](width)
@@ -47,27 +37,9 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
 
   clear()
 
-  val maskCavas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
-  maskCavas.style.zIndex = "1"
-  maskCavas.style.position = "absolute"
-  maskCavas.style.left = "0"
-  maskCavas.style.top = "0"
-  div.appendChild(maskCavas)
+  val ctx = createContext()
 
-  maskCavas.width = width * (cellSize + margin)
-  maskCavas.height = height * (cellSize + margin)
-
-  val maskContext = maskCavas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-
-  maskContext.fillStyle = "black"
-  maskContext.fillRect(0, 0, width * (cellSize + margin) + margin, height * (cellSize + margin) + margin)
-
-  maskContext.globalCompositeOperation = "destination-out"
-  for ( y <- 0 until height )
-    for ( x <- 0 until width ) {
-      fillCircle(maskContext, x * (cellSize + margin), y * (cellSize + margin))
-    }
-  maskContext.globalCompositeOperation = "source-over"
+  addMask()
 
   show()
 
@@ -111,12 +83,6 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
     matrix(y)(x) = active
   }
 
-  private def print(x: Int, y: Int, c: Char, font: Font) : Unit = {
-    val charFont = font.get(c)
-
-    print(x, y, charFont, font)
-  }
-
   def print(x: Int, y: Int, s: String, font: Font) : Unit = {
     for (ix <- s.indices)
       print(x + ix * font.size, y, s.charAt(ix), font)
@@ -137,29 +103,73 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
       }
   }
 
+  private def createContext() : CanvasRenderingContext2D = {
+    val canvas = dom.document.createElement("Canvas").asInstanceOf[Canvas]
+    canvas.style.zIndex = "0"
+    canvas.style.position = "absolute"
+    canvas.style.left = "0"
+    canvas.style.top = "0"
+    div.appendChild(canvas)
+
+    canvas.width = width * (cellSize + margin)
+    canvas.height = height * (cellSize + margin)
+
+    canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
+  }
+
+  private def addMask(): Unit = {
+    val maskCavas = dom.document.createElement("Canvas").asInstanceOf[Canvas]
+    maskCavas.style.zIndex = "1"
+    maskCavas.style.position = "absolute"
+    maskCavas.style.left = "0"
+    maskCavas.style.top = "0"
+    div.appendChild(maskCavas)
+
+    maskCavas.width = width * (cellSize + margin)
+    maskCavas.height = height * (cellSize + margin)
+
+    val maskContext = maskCavas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
+
+    maskContext.fillStyle = "black"
+    maskContext.fillRect(0, 0, width * (cellSize + margin) + margin, height * (cellSize + margin) + margin)
+
+    maskContext.globalCompositeOperation = "destination-out"
+    for (y <- 0 until height)
+      for (x <- 0 until width) {
+        fillCircle(maskContext, x * (cellSize + margin), y * (cellSize + margin))
+      }
+    maskContext.globalCompositeOperation = "source-over"
+  }
+
+  private def print(x: Int, y: Int, c: Char, font: Font) : Unit = {
+    val charFont = font.get(c)
+
+    print(x, y, charFont, font)
+  }
+
   private def print(x: Int, y: Int, charFont: CharFont, font: Font) : Unit = {
     for (iy <- 0 until font.size)
       for (ix <- 0 until font.size)
         if (charFont.get(iy, ix)) set(x + ix, y + iy, true)
   }
 
-  private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: Int) {
+  private def square(ctx: CanvasRenderingContext2D, x: Int, y: Int, color: Int) {
     ctx.fillStyle = colors(color)
     ctx.fillRect(x, y, cellSize + 1, cellSize + 1)
   }
 
-  def fillCircle(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int): Unit = {
+  private def fillCircle(ctx: CanvasRenderingContext2D, x: Int, y: Int): Unit = {
     ctx.beginPath()
     ctx.arc(x + halfCellSize + 1, y + halfCellSize + 1, halfCellSize, 0, PI2, false)
     ctx.fill()
     ctx.stroke()
   }
 
-  def deriveColor(color: String, coeff: Double) : String = {
+  private def deriveColor(color: String, coeff: Double) : String = {
     deriveColor(Color(color), coeff)
   }
 
-  def deriveColor(color: Color, coeff: Double) : String = {
+  private def deriveColor(color: Color, coeff: Double) : String = {
     Color((color.r * coeff).toInt, (color.g * coeff).toInt, (color.b * coeff).toInt).toString()
   }
 }

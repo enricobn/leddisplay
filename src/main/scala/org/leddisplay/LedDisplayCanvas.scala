@@ -12,7 +12,7 @@ object LedDisplayCanvas {
   val PI2 = 2 * Math.PI
 }
 
-class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin : Int, val width : Int, val height : Int,
+class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, val width : Int, val height : Int,
                        val onColor: String) {
   import LedDisplayCanvas._
 
@@ -22,12 +22,18 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
   private val onColorColor = Color(onColor)
   private var changed = false
   private val colors = Array[String](
-    deriveColor(onColor, 0.2),
-    deriveColor(onColor, 0.4),
-    deriveColor(onColor, 0.6),
-    deriveColor(onColor, 0.8),
+    deriveColor(onColor, 0.20),
+    deriveColor(onColor, 0.50),
+    deriveColor(onColor, 0.75),
     onColorColor.toString()
   )
+
+  val canvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
+  canvas.style.zIndex = "0"
+  canvas.style.position = "absolute"
+  canvas.style.left = "0"
+  canvas.style.top = "0"
+  div.appendChild(canvas)
 
   canvas.width = width * (cellSize + margin)
   canvas.height = height * (cellSize + margin)
@@ -39,18 +45,31 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
     screen(y) = new Array[Int](width)
   }
 
-  ctx.fillStyle = "black"
-  ctx.fillRect(0, 0, width * (cellSize + margin) + margin, height * (cellSize + margin) + margin)
-
   clear()
 
-//  val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
-//  offscreenCanvas.width = width * (cellSize + margin)
-//  offscreenCanvas.height = height * (cellSize + margin)
-//  val offScreenContext = offscreenCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-//  offScreenContext.fillStyle = "white"
-//  offScreenContext.fillText("0", 0, 0)
-//  val imageData = offScreenContext.getImageData(0, 0, 100, 100).data
+  val maskCavas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
+  maskCavas.style.zIndex = "1"
+  maskCavas.style.position = "absolute"
+  maskCavas.style.left = "0"
+  maskCavas.style.top = "0"
+  div.appendChild(maskCavas)
+
+  maskCavas.width = width * (cellSize + margin)
+  maskCavas.height = height * (cellSize + margin)
+
+  val maskContext = maskCavas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+
+  maskContext.fillStyle = "black"
+  maskContext.fillRect(0, 0, width * (cellSize + margin) + margin, height * (cellSize + margin) + margin)
+
+  maskContext.globalCompositeOperation = "destination-out"
+  for ( y <- 0 until height )
+    for ( x <- 0 until width ) {
+      fillCircle(maskContext, x * (cellSize + margin), y * (cellSize + margin))
+    }
+  maskContext.globalCompositeOperation = "source-over"
+
+  show()
 
   def show() {
     for ( y <- 0 until height )
@@ -58,7 +77,7 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
         val oldValue = screen(y)(x)
         val newValue =
           if (matrix(y)(x)) {
-            4
+            3
           } else {
             Math.max(screen(y)(x) -1, 0)
           }
@@ -75,8 +94,6 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
         square(ctx, x * (cellSize + margin), y * (cellSize + margin), screen(y)(x))
 
     changed = false
-//    var image = offScreenContext.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).asInstanceOf[ImageData]
-//    ctx.putImageData(image, 0, 0)
   }
 
   def clear() : Unit = {
@@ -128,13 +145,12 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
 
   private def square(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int, color: Int) {
     ctx.fillStyle = colors(color)
-//    ctx.fillRect(x, y, cellSize, cellSize)
-    fillCircle(ctx, x, y)
+    ctx.fillRect(x, y, cellSize + 1, cellSize + 1)
   }
 
   def fillCircle(ctx: dom.CanvasRenderingContext2D, x: Int, y: Int): Unit = {
     ctx.beginPath()
-    ctx.arc(x + halfCellSize +1, y + halfCellSize +1, halfCellSize, 0, PI2, false)
+    ctx.arc(x + halfCellSize + 1, y + halfCellSize + 1, halfCellSize, 0, PI2, false)
     ctx.fill()
     ctx.stroke()
   }

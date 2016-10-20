@@ -9,11 +9,10 @@
 <script type="text/javascript" src="./target/scala-2.11/led_display-fastopt.js"></script>
 <script type="text/javascript" src="./target/scala-2.11/led_display-jsdeps.js"></script>
 <!-- Run tutorial.webapp.TutorialApp -->
-<div>
-    <canvas style="display: block" id="canvas"></canvas>
-</div>
+<div id="ledDisplay"></div>
 <script type="text/javascript">
-  var displayManager = new org.leddisplay.LedDisplayManager(document.getElementById('canvas'));
+  var displayManager = new org.leddisplay.LedDisplayManager(document.getElementById('ledDisplay'));
+  //displayManager.setText("This is a led display component written in Scala.js.");
   displayManager.addText("This is a led display component written in Scala.js.");
   displayManager.setScrolling(true);
   //tutorial.webapp.TutorialAppReact().main();

@@ -10,12 +10,12 @@ import scala.scalajs.js.timers._
   * Created by enrico on 10/20/16.
   */
 @JSExport
-class LedDisplayManager(canvas: html.Canvas, timeout: Int = 50) {
+class LedDisplayManager(div: html.Div, timeout: Int = 50) {
   var scrolling = false
   var scrollingText = ""
   var scrollingTextOffset = 0
 
-  val display = new LedDisplayCanvas(canvas, cellSize = 10, margin = 1, width = 120, height = 10, onColor = "#ff0000")
+  val display = new LedDisplayCanvas(div, cellSize = 10, margin = 1, width = 120, height = 10, onColor = "#ff0000")
   var font: Font = null
 
   Font.readFont(font => {
@@ -72,7 +72,7 @@ class LedDisplayManager(canvas: html.Canvas, timeout: Int = 50) {
         for (y <- 0 until font.size) {
           display.set(display.width -1, y + 1, charFont.get(y, scrollingTextOffset))
         }
-        scrollingTextOffset += 1;
+        scrollingTextOffset += 1
         if (scrollingTextOffset >= font.size) {
           scrollingTextOffset = 0
           scrollingText = scrollingText.substring(1)

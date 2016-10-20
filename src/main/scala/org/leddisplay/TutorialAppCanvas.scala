@@ -29,7 +29,7 @@ object TutorialAppCanvas {
     Font.readFont(font => {
 //    TextFont.readFont("src/web/font.json", font => {
         Array.range(0, 1).foreach(y => {
-          display.print(0, y * 8 + 1, "Pippo de pippis", font)
+          display.print(y * 8 + 1, 0, "Pippo de pippis", font)
         })
 
         display.show()

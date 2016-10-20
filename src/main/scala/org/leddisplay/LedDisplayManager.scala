@@ -11,9 +11,9 @@ import scala.scalajs.js.timers._
   */
 @JSExport
 class LedDisplayConfig() {
-  @JSExport var cellSize: Int = 10
+  @JSExport var cellSize: Int = 6
 
-  @JSExport var margin: Int = 1
+  @JSExport var margin: Int = 2
 
   @JSExport var width: Int = 100
 
@@ -87,7 +87,7 @@ class LedDisplayManager(div: html.Div, config: LedDisplayConfig = new LedDisplay
       if (scrollingText.nonEmpty) {
         val charFont = font.get(scrollingText(0))
         for (y <- 0 until font.size) {
-          display.set(display.width -1, y + 1, charFont.get(y, scrollingTextOffset))
+          display.set(y + 1, display.width -1, charFont.get(y, scrollingTextOffset))
         }
         scrollingTextOffset += 1
         if (scrollingTextOffset >= font.size) {

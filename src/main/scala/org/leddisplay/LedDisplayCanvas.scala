@@ -75,14 +75,14 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
     changed = true
   }
 
-  def set(x: Int, y: Int, active: Boolean) : Unit = {
+  def set(y: Int, x: Int, active: Boolean): Unit = {
     if (matrix(y)(x) != active) {
       changed = true
     }
     matrix(y)(x) = active
   }
 
-  def print(x: Int, y: Int, s: String, font: Font) : Unit = {
+  def print(y: Int, x: Int, s: String, font: Font): Unit = {
     for (ix <- s.indices)
       print(x + ix * font.size, y, s.charAt(ix), font)
 
@@ -149,7 +149,7 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
   private def print(x: Int, y: Int, charFont: CharFont, font: Font) : Unit = {
     for (iy <- 0 until font.size)
       for (ix <- 0 until font.size)
-        if (charFont.get(iy, ix)) set(x + ix, y + iy, true)
+        if (charFont.get(iy, ix)) set(y + iy, x + ix, true)
   }
 
   private def square(ctx: CanvasRenderingContext2D, x: Int, y: Int, color: Int) {

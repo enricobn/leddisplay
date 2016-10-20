@@ -26,11 +26,12 @@ class LedDisplayConfig() {
 }
 
 @JSExport
-class LedDisplayManager(div: html.Div, config: LedDisplayConfig = new LedDisplayConfig) {
+class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplayConfig) {
   var scrolling = false
   var scrollingText = ""
   var scrollingTextOffset = 0
 
+  val div = dom.document.getElementById(divId).asInstanceOf[html.Div]
   val display = new LedDisplayCanvas(div, cellSize = config.cellSize, margin = config.margin, width = config.width,
     height = config.height, color = config.color)
   var font: Font = null

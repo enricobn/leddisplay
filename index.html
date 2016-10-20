@@ -31,7 +31,7 @@
               displayConfig.timeout = 30;
             }
 
-            var displayManager = new org.leddisplay.LedDisplayManager(document.getElementById('ledDisplay' + i), displayConfig);
+            var displayManager = new org.leddisplay.LedDisplayManager('ledDisplay' + i, displayConfig);
 
             displayManager.addText("This is a led display component written in Scala.js.");
             displayManager.setScrolling(true);

@@ -36,6 +36,10 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
 
   clear()
 
+  div.style.width = width * (cellSize + margin) + "px"
+  div.style.height = (height * (cellSize + margin)) + "px"
+//  div.style.display = "block"
+
   val ctx = createContext()
 
   addMask()
@@ -106,8 +110,8 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
     val canvas = dom.document.createElement("Canvas").asInstanceOf[Canvas]
     canvas.style.zIndex = "0"
     canvas.style.position = "absolute"
-    canvas.style.left = "0"
-    canvas.style.top = "0"
+    canvas.style.left = div.style.left// "0"
+    canvas.style.top = div.style.top //"0"
     div.appendChild(canvas)
 
     canvas.width = width * (cellSize + margin)
@@ -120,8 +124,8 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
     val maskCavas = dom.document.createElement("Canvas").asInstanceOf[Canvas]
     maskCavas.style.zIndex = "1"
     maskCavas.style.position = "absolute"
-    maskCavas.style.left = "0"
-    maskCavas.style.top = "0"
+    maskCavas.style.left = div.style.left //"0"
+    maskCavas.style.top = div.style.top //"0"
     div.appendChild(maskCavas)
 
     maskCavas.width = width * (cellSize + margin)

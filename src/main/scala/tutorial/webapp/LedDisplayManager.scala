@@ -12,6 +12,8 @@ import scala.scalajs.js.timers._
 @JSExport
 class LedDisplayManager(canvas: html.Canvas, timeout: Int = 50) {
   var scrolling = false
+  var scrollingText = ""
+  var scrollingTextOffset = 0
 
   val display = new LedDisplayCanvas(canvas, cellSize = 10, margin = 1, width = 120, height = 10, onColor = "#ff0000")
   var font: Font = null
@@ -38,13 +40,44 @@ class LedDisplayManager(canvas: html.Canvas, timeout: Int = 50) {
         setText(text)
       }
     } else {
-      display.print(0, 1, text, font)
+      scrollingText = ""
+      scrollingTextOffset = 0
+      display.print(1, 1, text, font)
     }
+  }
+
+  @JSExport
+  def addText(text: String): Unit = {
+    if (font == null) {
+      setTimeout(timeout) {
+        addText(text)
+      }
+    } else {
+      scrollingText += text
+    }
+  }
+
+  @JSExport
+  def clear(): Unit = {
+    scrollingText = ""
+    scrollingTextOffset = 0
+    display.clear()
   }
 
   private def loop : (Double) => Unit = (time: Double) => {
     if (scrolling) {
       display.scrollLeft()
+      if (scrollingText.nonEmpty) {
+        val charFont = font.get(scrollingText(0))
+        for (y <- 0 until font.size) {
+          display.set(display.width -1, y + 1, charFont.get(y, scrollingTextOffset))
+        }
+        scrollingTextOffset += 1;
+        if (scrollingTextOffset >= font.size) {
+          scrollingTextOffset = 0
+          scrollingText = scrollingText.substring(1)
+        }
+      }
     }
     display.show()
 

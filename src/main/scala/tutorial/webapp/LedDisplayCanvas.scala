@@ -14,8 +14,8 @@ object LedDisplayCanvas {
   val PI2 = 2 * Math.PI
 }
 
-class LedDisplayCanvas(canvas: html.Canvas, cellSize : Int, margin : Int, width : Int, height : Int,
-                       onColor: String) {
+class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin : Int, val width : Int, val height : Int,
+                       val onColor: String) {
   import LedDisplayCanvas._
 
   private val matrix = new Array[Array[Boolean]](height)
@@ -84,7 +84,10 @@ class LedDisplayCanvas(canvas: html.Canvas, cellSize : Int, margin : Int, width 
     changed = true
   }
 
-  private def set(x: Int, y: Int, active: Boolean) : Unit = {
+  def set(x: Int, y: Int, active: Boolean) : Unit = {
+    if (matrix(y)(x) != active) {
+      changed = true
+    }
     matrix(y)(x) = active
   }
 

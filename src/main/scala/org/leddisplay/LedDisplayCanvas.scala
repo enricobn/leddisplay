@@ -39,6 +39,9 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
     screen(y) = new Array[Int](width)
   }
 
+  ctx.fillStyle = "black"
+  ctx.fillRect(0, 0, width * (cellSize + margin) + margin, height * (cellSize + margin) + margin)
+
   clear()
 
 //  val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
@@ -66,9 +69,6 @@ class LedDisplayCanvas(val canvas: html.Canvas, val cellSize : Int, val margin :
       }
 
     if (!changed) return
-
-    ctx.fillStyle = "black"
-    ctx.fillRect(0, 0, width * (cellSize + margin) + margin, height * (cellSize + margin) + margin)
 
     for ( y <- 0 until height )
       for ( x <- 0 until width )

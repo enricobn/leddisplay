@@ -36,7 +36,7 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
     height = config.height, color = config.color)
   var font: Font = null
 
-  OffscreenFont.readFont(font => {
+  ImageFont.readFont(font => {
     this.font = font
 
     display.show()

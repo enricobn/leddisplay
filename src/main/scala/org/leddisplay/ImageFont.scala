@@ -10,7 +10,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by enrico on 10/18/16.
   */
-object OffscreenFont {
+object ImageFont {
 
   def readFont(onSuccess: (Font) => Unit): Unit = {
     //  var str = ""

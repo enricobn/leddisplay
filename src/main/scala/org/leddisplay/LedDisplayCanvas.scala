@@ -88,8 +88,13 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
   }
 
   def print(y: Int, x: Int, s: String, font: Font): Unit = {
-    for (ix <- s.indices)
-      print(x + ix * font.size, y, s.charAt(ix), font)
+    var xPixel = x
+    for (ix <- s.indices) {
+      val c = s.charAt(ix)
+      val charFont = font.get(c)
+      print(xPixel, y, c, charFont, font)
+      xPixel += charFont.width + 1
+    }
 
     changed = true
   }
@@ -145,15 +150,13 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
     maskContext.globalCompositeOperation = "source-over"
   }
 
-  private def print(x: Int, y: Int, c: Char, font: Font) : Unit = {
-    val charFont = font.get(c)
-
+  private def print(x: Int, y: Int, c: Char, charFont: CharFont, font: Font) : Unit = {
     print(x, y, charFont, font)
   }
 
   private def print(x: Int, y: Int, charFont: CharFont, font: Font) : Unit = {
     for (iy <- 0 until font.size)
-      for (ix <- 0 until font.size)
+      for (ix <- 0 until charFont.width)
         if (charFont.get(iy, ix)) set(y + iy, x + ix, true)
   }
 

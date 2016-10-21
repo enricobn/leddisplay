@@ -30,31 +30,38 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
   var scrolling = false
   var scrollingText = ""
   var scrollingTextOffset = 0
+  var scrollEmpty = false
 
   val div = dom.document.getElementById(divId).asInstanceOf[html.Div]
   val display = new LedDisplayCanvas(div, cellSize = config.cellSize, margin = config.margin, width = config.width,
     height = config.height, color = config.color)
 
   var font: Font = null
-  ImageFont.readFont(font => {
-    this.font = font
+
+  val imageFont = true
+
+  if (imageFont) {
+    ImageFont.readFont(font => {
+      this.font = font
+
+      display.show()
+
+      setTimeout(config.timeout) {
+        loop.apply(0)
+      }
+    })
+  } else {
+    font = OffscreenFont.read("Courier 10px")
+    dom.console.log("Hello")
+    dom.console.log(font.get('H').toString)
+    dom.console.log(font.get('g').toString)
 
     display.show()
 
     setTimeout(config.timeout) {
       loop.apply(0)
     }
-  })
-
-//  val font = OffscreenFont.read("Courier 10px")
-//  dom.console.log("Hello")
-//  dom.console.log(font.get('0').toString)
-//
-//  display.show()
-//
-//  setTimeout(config.timeout) {
-//    loop.apply(0)
-//  }
+  }
 
   @JSExport
   def setScrolling(scrolling: Boolean): Unit = {
@@ -96,14 +103,19 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
     if (scrolling) {
       display.scrollLeft()
       if (scrollingText.nonEmpty) {
-        val charFont = font.get(scrollingText(0))
-        for (y <- 0 until font.size) {
-          display.set(y + 1, display.width -1, charFont.get(y, scrollingTextOffset))
-        }
-        scrollingTextOffset += 1
-        if (scrollingTextOffset >= charFont.width) {
-          scrollingTextOffset = 0
-          scrollingText = scrollingText.substring(1)
+        if (scrollEmpty) {
+          scrollEmpty = false
+        } else {
+          val charFont = font.get(scrollingText(0))
+          for (y <- 0 until font.size) {
+            display.set(y + 1, display.width - 1, charFont.get(y, scrollingTextOffset))
+          }
+          scrollingTextOffset += 1
+          if (scrollingTextOffset >= charFont.width) {
+            scrollingTextOffset = 0
+            scrollingText = scrollingText.substring(1)
+            scrollEmpty = true
+          }
         }
       }
     }

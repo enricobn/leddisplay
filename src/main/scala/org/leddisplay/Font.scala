@@ -38,7 +38,7 @@ class CharFontImpl(val width: Int) extends CharFont {
     var s = ""
     for (y <- data.indices) {
       for (x <- data(y).indices)
-        if (data(y)(x)) s += "1" else s += " "
+        if (data(y)(x)) s += "1" else s += "_"
       s += "\n"
     }
     s

@@ -37,10 +37,10 @@ object FontImageReaderSpec extends TestSuite {
     'read {
       val fonts = reader.read()
       print(fonts.get('\0'))
-      assert(fonts.get('\0').toString.equals("1 \n 1\n"))
-      assert(fonts.get('\1').toString.equals(" 1\n11\n"))
-      assert(fonts.get('\2').toString.equals("1 \n1 \n"))
-      assert(fonts.get('\3').toString.equals(" 1\n 1\n"))
+      assert(fonts.get('\0').toString.equals("1_\n_1\n"))
+      assert(fonts.get('\1').toString.equals("_1\n11\n"))
+      assert(fonts.get('\2').toString.equals("1_\n1_\n"))
+      assert(fonts.get('\3').toString.equals("_1\n_1\n"))
     }
 
     'pixelOffset {

@@ -15,7 +15,9 @@ object OffscreenFont {
     val offScreenContext = offscreenCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
     val metrics: FontMetrics = fontMetrics(fontType, offscreenCanvas, offScreenContext)
-    val font = new FontImpl(32 /*metrics.height*/)
+    val font = new FontImpl(metrics.height)
+
+    dom.console.log(metrics.toString)
 
     offScreenContext.font = fontType
 
@@ -28,14 +30,14 @@ object OffscreenFont {
         offScreenContext.fillStyle = "white"
         offScreenContext.fillText(c.toString, 0, offscreenCanvas.height / 2)
         val measure = offScreenContext.measureText(c.toString)
-        val charFont = font.getOrCreate(c, () => new CharFontImpl(measure.width.toInt + 2))
+        val charFont = font.getOrCreate(c, () => new CharFontImpl(measure.width.toInt))
         val data = offScreenContext.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).data
-        for (y <- 0 /*metrics.minY*/ until offscreenCanvas.height)
-          for (x <- 0 until offscreenCanvas.width) {
+        for (y <- metrics.minY to metrics.maxY)
+          for (x <- 0 until measure.width.toInt) {
             val red = data(y * 4 * offscreenCanvas.width + x * 4)
-            val value = red > 100
-//            charFont.set(y - metrics.minY, x, value)
-            charFont.set(y, x, value)
+            val value = getValue(red)
+            charFont.set(y - metrics.minY, x, value)
+//            charFont.set(y, x, value)
           }
       }
     }
@@ -45,12 +47,14 @@ object OffscreenFont {
   }
 
   private case class FontMetrics(var minY: Int, var maxY: Int) {
-    val height = maxY - minY
+    def height = maxY - minY + 1
 
     def update(y: Int): Unit = {
       minY = Math.min(y, minY)
       maxY = Math.max(y, maxY)
     }
+
+    override def toString: String = "(" + minY + ", " + maxY + ", " + height + ")"
   }
 
   private def fontMetrics(font: String, canvas: html.Canvas, ctx: dom.CanvasRenderingContext2D) : FontMetrics = {
@@ -67,7 +71,7 @@ object OffscreenFont {
     for (y <- 0 until canvas.height)
       for (x <- 0 until canvas.width) {
         val red = data(y * 4 * canvas.width + x * 4)
-        val value = red > 100
+        val value = getValue(red)
         if (value) {
           metrics.update(y)
         }
@@ -75,6 +79,8 @@ object OffscreenFont {
 
     metrics
   }
+
+  private def getValue(red: Int) : Boolean = red > 50
 
 
 /*  private def fontHeight(font: String) : Int = {

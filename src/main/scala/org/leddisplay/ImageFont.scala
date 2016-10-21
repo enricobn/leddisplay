@@ -13,26 +13,12 @@ import scala.collection.mutable.ArrayBuffer
 object ImageFont {
 
   def readFont(onSuccess: (Font) => Unit): Unit = {
-    //  var str = ""
-    //  for (i <- 0 to 255) {
-    //    val c = i.asInstanceOf[Char]
-    //    if (!c.isControl) {
-    //      str += c
-    //    }
-    //  }
-
     val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
     offscreenCanvas.width = 8 * 16
     offscreenCanvas.height = 8 * 16
     val offScreenContext = offscreenCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-    //  offScreenContext.fillStyle = "black"
-    //  offScreenContext.fillRect(0, 0, 10 * str.length, 10)
-    //  offScreenContext.fillStyle = "white"
-    //  offScreenContext.font = "10px Monospace"
-
 
     val image = dom.document.createElement("img").asInstanceOf[HTMLImageElement]
-//    dom.document.body.appendChild(offscreenCanvas)
     image.onload = { evt: Event => {
       offScreenContext.drawImage(image, 0, 0, 8 * 16, 8 * 16)
       val data = offScreenContext.getImageData(0, 0, 8 * 16 , 8 * 16).data
@@ -41,9 +27,6 @@ object ImageFont {
       onSuccess.apply(fonts)
     }}
     image.src = "src/web/08x08_DOS437_unknown.png"
-
-    //  offScreenContext.fillText(str, 0, 9)
-
   }
 
 }
@@ -67,21 +50,10 @@ class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int, 
     var ich = 0
     var ch = ich.asInstanceOf[Char]
 
-//    dom.console.log(data.length)
-
     while (i < data.length) {
       val value = onPixel(data(i), data(i + 1), data(i + 2), data(i + 3))
 
-      if (!ch.isControl) {
-//        dom.console.log(ch + ": " + value)
-        //        if (value) {
-        //          dom.console.log("true: " + ch)
-        //        } else {
-        //          dom.console.log("false: " + ch)
-        //        }
-      }
-
-      fonts.getOrCreate(ch, () => new CharFontImpl(charSize)).set(y, x, value)
+      fonts.getOrCreate(ch, () => new CharFontImpl(charSize - 1)).set(y, x, value)
       i += 4
       if (i < data.length) {
         x += 1

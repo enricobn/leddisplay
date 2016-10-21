@@ -18,9 +18,11 @@ trait CharFont {
 
   def get(y: Int, x: Int) : Boolean
 
+  def width: Int
+
 }
 
-class CharFontImpl() extends CharFont {
+class CharFontImpl(val width: Int) extends CharFont {
   val data = new mutable.ArrayBuffer[mutable.ArrayBuffer[Boolean]]()
 
   def set(y: Int, x: Int, value: Boolean): Unit = {
@@ -49,15 +51,18 @@ class CharFontImpl() extends CharFont {
 class FontImpl(val size: Int) extends Font {
   val data = new mutable.HashMap[Char, CharFontImpl]()
 
-  def get(c: Char) : CharFontImpl = {
-    var font: CharFontImpl = null
+  override def get(c: Char) : CharFontImpl = {
+    data(c)
+  }
+
+  def getOrCreate(c: Char, supplier: () => CharFontImpl) : CharFontImpl = {
     if (!data.contains(c)) {
-      font = new CharFontImpl()
+      val font = supplier.apply()
       data(c) = font
+      font
     } else {
-      font = data(c)
+      data(c)
     }
-    font
   }
 
 }

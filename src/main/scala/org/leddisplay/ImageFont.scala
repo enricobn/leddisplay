@@ -81,7 +81,7 @@ class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int, 
         //        }
       }
 
-      fonts.get(ch).set(y, x, value)
+      fonts.getOrCreate(ch, () => new CharFontImpl(charSize)).set(y, x, value)
       i += 4
       if (i < data.length) {
         x += 1

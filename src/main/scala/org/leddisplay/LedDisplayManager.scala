@@ -34,8 +34,8 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
   val div = dom.document.getElementById(divId).asInstanceOf[html.Div]
   val display = new LedDisplayCanvas(div, cellSize = config.cellSize, margin = config.margin, width = config.width,
     height = config.height, color = config.color)
-  var font: Font = null
 
+  var font: Font = null
   ImageFont.readFont(font => {
     this.font = font
 
@@ -45,6 +45,16 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
       loop.apply(0)
     }
   })
+
+//  val font = OffscreenFont.read("Courier 10px")
+//  dom.console.log("Hello")
+//  dom.console.log(font.get('0').toString)
+//
+//  display.show()
+//
+//  setTimeout(config.timeout) {
+//    loop.apply(0)
+//  }
 
   @JSExport
   def setScrolling(scrolling: Boolean): Unit = {
@@ -91,7 +101,7 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
           display.set(y + 1, display.width -1, charFont.get(y, scrollingTextOffset))
         }
         scrollingTextOffset += 1
-        if (scrollingTextOffset >= font.size) {
+        if (scrollingTextOffset >= charFont.width) {
           scrollingTextOffset = 0
           scrollingText = scrollingText.substring(1)
         }

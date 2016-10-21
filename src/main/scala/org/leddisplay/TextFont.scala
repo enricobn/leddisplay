@@ -34,6 +34,8 @@ class TextFont(data: Array[TextCharFont]) extends Font {
 }
 
 case class TextCharFont(char: String, bitmap: Array[String]) extends CharFont {
+  val width = bitmap(0).length
+
   def set(y: Int, x: Int, value: Boolean) {
     throw new UnsupportedOperationException
   }

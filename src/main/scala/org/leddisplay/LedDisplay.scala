@@ -55,7 +55,7 @@ class LedDisplay(cellSize : Int, margin : Int, width : Int, height : Int) {
 
   private def print(x: Int, y: Int, charFont: CharFont, size: Int, color: String) : Unit = {
     for (iy <- 0 until size)
-      for (ix <- 0 until size)
+      for (ix <- 0 until charFont.width)
         if (charFont.get(iy, ix)) set(x + ix, y + iy, color)
   }
 

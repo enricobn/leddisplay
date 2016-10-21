@@ -26,7 +26,7 @@ object TutorialAppCanvas {
       }
     }
 
-    Font.readFont(font => {
+    OffscreenFont.readFont(font => {
 //    TextFont.readFont("src/web/font.json", font => {
         Array.range(0, 1).foreach(y => {
           display.print(y * 8 + 1, 0, "Pippo de pippis", font)

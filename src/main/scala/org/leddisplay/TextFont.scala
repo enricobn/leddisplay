@@ -24,7 +24,7 @@ object TextFont {
 }
 
 class TextFont(data: Array[TextCharFont]) extends Font {
-  override def get(c: Char): CharFont = {
+  override def get(c: Char): TextCharFont = {
     // TODO if I cannot find it?
     data.filter(ch => ch.char == c.toString)(0)
 //    data(c.asInstanceOf[Int])
@@ -34,7 +34,7 @@ class TextFont(data: Array[TextCharFont]) extends Font {
 }
 
 case class TextCharFont(char: String, bitmap: Array[String]) extends CharFont {
-  override def set(y: Int, x: Int, value: Boolean) {
+  def set(y: Int, x: Int, value: Boolean) {
     throw new UnsupportedOperationException
   }
 

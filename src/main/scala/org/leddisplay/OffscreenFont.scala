@@ -10,7 +10,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by enrico on 10/18/16.
   */
-object Font {
+object OffscreenFont {
 
   def readFont(onSuccess: (Font) => Unit): Unit = {
     //  var str = ""
@@ -59,7 +59,7 @@ class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int, 
     ((char / columns) * columns * charSize * charSize + (char % columns) * charSize + y * columns * charSize + x) * 4
 
   def read() : Font = {
-    val fonts = new OffscreenFontImpl(charSize)
+    val fonts = new FontImpl(charSize)
 
     var i = 0
     var x = 0
@@ -109,61 +109,4 @@ class FontImageReader(data: scalajs.js.Array[Int], charSize: Int, columns: Int, 
 
     fonts
   }
-}
-
-trait CharFont {
-  def set(y: Int, x: Int, value: Boolean)
-
-  def get(y: Int, x: Int) : Boolean
-
-}
-
-class OffscreenCharFontImpl() extends CharFont {
-  val data = new mutable.ArrayBuffer[mutable.ArrayBuffer[Boolean]]()
-
-  def set(y: Int, x: Int, value: Boolean): Unit = {
-    while (data.length <= y)
-      data += new ArrayBuffer[Boolean]()
-    var row = data(y)
-    while (row.length <= x)
-      row += false
-    row(x) = value
-  }
-
-  override def toString = {
-    var s = ""
-    for (y <- data.indices) {
-      for (x <- data(y).indices)
-        if (data(y)(x)) s += "1" else s += " "
-      s += "\n"
-    }
-    s
-  }
-
-  override def get(y: Int, x: Int): Boolean = data(y)(x)
-
-}
-
-trait Font {
-
-  def get(c: Char) : CharFont
-
-  def size: Int
-
-}
-
-class OffscreenFontImpl(val size: Int) extends Font {
-  val data = new mutable.HashMap[Char, CharFont]()
-
-  def get(c: Char) : CharFont = {
-    var font: CharFont = null
-    if (!data.contains(c)) {
-      font = new OffscreenCharFontImpl()
-      data(c) = font
-    } else {
-      font = data(c)
-    }
-    font
-  }
-
 }

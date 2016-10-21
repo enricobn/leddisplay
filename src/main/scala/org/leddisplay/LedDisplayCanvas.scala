@@ -81,6 +81,8 @@ class LedDisplayCanvas(val div: html.Div, val cellSize : Int, val margin : Int, 
   }
 
   def set(y: Int, x: Int, active: Boolean): Unit = {
+    if (y >= matrix.length || x >= matrix(y).length) return
+
     if (matrix(y)(x) != active) {
       changed = true
     }

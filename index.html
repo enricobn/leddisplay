@@ -23,7 +23,8 @@
           var i = 0;
           for (i = 0; i < 3; i++) {
             var displayConfig = new org.leddisplay.LedDisplayConfig();
-            displayConfig.height = 12;
+            displayConfig.height = 17;
+            displayConfig.width = 180;
             if (i == 1) {
               displayConfig.color = "#00ff00";
               displayConfig.timeout = 40;
@@ -34,6 +35,7 @@
 
             var displayManager = new org.leddisplay.LedDisplayManager('ledDisplay' + i, displayConfig);
 
+            //displayManager.setText("HgtjThis is a led display ");
             displayManager.addText("This is a led display component written in Scala.js.");
             displayManager.setScrolling(true);
           }

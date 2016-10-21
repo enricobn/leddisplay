@@ -44,7 +44,11 @@ class CharFontImpl(val width: Int) extends CharFont {
     s
   }
 
-  override def get(y: Int, x: Int): Boolean = data(y)(x)
+  override def get(y: Int, x: Int): Boolean =
+    if (y >= data.length || x >= data(y).length)
+      false
+    else
+      data(y)(x)
 
 }
 

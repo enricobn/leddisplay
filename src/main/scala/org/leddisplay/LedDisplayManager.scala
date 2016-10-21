@@ -38,7 +38,7 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
 
   var font: Font = null
 
-  val imageFont = true
+  val imageFont = false
 
   if (imageFont) {
     ImageFont.readFont(font => {
@@ -51,10 +51,7 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
       }
     })
   } else {
-    font = OffscreenFont.read("Courier 10px")
-    dom.console.log("Hello")
-    dom.console.log(font.get('H').toString)
-    dom.console.log(font.get('g').toString)
+    font = OffscreenFont.read("Courier", 16)
 
     display.show()
 

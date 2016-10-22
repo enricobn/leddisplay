@@ -10,8 +10,8 @@ object OffscreenFont {
 
   def read(fontFamily: String, size: Int) : Font = {
     val offscreenCanvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
-    offscreenCanvas.width = size * 4
-    offscreenCanvas.height = size * 4
+    offscreenCanvas.width = size * 8
+    offscreenCanvas.height = size * 8
     val offScreenContext = offscreenCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
     offScreenContext.font = size + "px " + fontFamily

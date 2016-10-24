@@ -17,29 +17,33 @@ class LedDisplayConfig() {
 
   @JSExport var width: Int = 100
 
-  @JSExport var height: Int = 10
+  @JSExport var height: Int = 11
 
   @JSExport var color: String = "#ff0000"
 
   @JSExport var timeout: Int = 50
 
+  @JSExport var fontFamily: String = "Courier New"
+
+  @JSExport var fontSize: Int = 10
+
 }
 
 @JSExport
 class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplayConfig) {
-  var scrolling = false
-  var scrollingText = ""
-  var scrollingTextOffset = 0
-  var scrollEmpty = false
-
-  val div = dom.document.getElementById(divId).asInstanceOf[html.Div]
-  val display = new LedDisplayCanvas(div, cellSize = config.cellSize, margin = config.margin, width = config.width,
+  private var scrollingText = ""
+  private var scrollingTextOffset = 0
+  private var scrollEmpty = false
+  private var font: Font = null
+  private val div = dom.document.getElementById(divId).asInstanceOf[html.Div]
+  private val display = new LedDisplayCanvas(div, cellSize = config.cellSize, margin = config.margin, width = config.width,
     height = config.height, color = config.color)
+  private val imageFont = false
 
-  var font: Font = null
+  @JSExport
+  var scrolling = false
 
-  val imageFont = false
-
+  // only for test
   if (imageFont) {
     ImageFont.readFont(font => {
       this.font = font
@@ -51,7 +55,7 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
       }
     })
   } else {
-    font = OffscreenFont.read("Courier", 16)
+    font = OffscreenFont.read(config.fontFamily, config.fontSize)
 
     display.show()
 
@@ -61,13 +65,9 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
   }
 
   @JSExport
-  def setScrolling(scrolling: Boolean): Unit = {
-    this.scrolling = scrolling
-  }
-
-  @JSExport
   def setText(text: String): Unit = {
     if (font == null) {
+      // waiting for the font to be loaded
       setTimeout(config.timeout) {
         setText(text)
       }

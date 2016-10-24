@@ -10,13 +10,13 @@ object OffscreenFont {
 
   def read(fontFamily: String, size: Int) : Font = {
     val canvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
-    canvas.width = size * 8
-    canvas.height = size * 8
+    canvas.width = size * 4 // it must contain 2 chars
+    canvas.height = size * 2
     val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
     ctx.font = size + "px " + fontFamily
 
-    val metrics: FontMetrics = print("HTij", canvas, ctx)
+    val metrics: FontMetrics = print("Hg", canvas, ctx)
     val font = new FontImpl(metrics.height)
 
     for (i <- 0 to 255) {

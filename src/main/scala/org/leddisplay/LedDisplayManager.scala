@@ -11,13 +11,13 @@ import scala.scalajs.js.timers._
   */
 @JSExport
 class LedDisplayConfig() {
-  @JSExport var cellSize: Int = 6
+  @JSExport var cellSize: Int = 4
 
   @JSExport var margin: Int = 2
 
   @JSExport var width: Int = 100
 
-  @JSExport var height: Int = 11
+  @JSExport var height: Int = 14
 
   @JSExport var color: String = "#ff0000"
 
@@ -25,7 +25,9 @@ class LedDisplayConfig() {
 
   @JSExport var fontFamily: String = "Courier New"
 
-  @JSExport var fontSize: Int = 10
+  @JSExport var fontSize: Int = 12
+
+  @JSExport var fontColorThreshold: Int = 50
 
 }
 
@@ -55,7 +57,7 @@ class LedDisplayManager(divId: String, config: LedDisplayConfig = new LedDisplay
       }
     })
   } else {
-    font = OffscreenFont.read(config.fontFamily, config.fontSize)
+    font = OffscreenFont.read(config.fontFamily, config.fontSize, config.fontColorThreshold)
 
     display.show()
 

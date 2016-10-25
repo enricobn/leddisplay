@@ -8,7 +8,7 @@ import org.scalajs.dom.html
   */
 object OffscreenFont {
 
-  def read(fontFamily: String, size: Int) : Font = {
+  def read(fontFamily: String, size: Int, colorThreshold: Int) : Font = {
     val canvas = dom.document.createElement("Canvas").asInstanceOf[html.Canvas]
     canvas.width = size * 4 // it must contain 2 chars
     canvas.height = size * 2
@@ -16,7 +16,7 @@ object OffscreenFont {
 
     ctx.font = size + "px " + fontFamily
 
-    val metrics: FontMetrics = print("Hg", canvas, ctx)
+    val metrics: FontMetrics = print("Hg", canvas, ctx, colorThreshold)
     val font = new FontImpl(metrics.height)
 
     for (i <- 0 to 255) {
@@ -29,7 +29,7 @@ object OffscreenFont {
         ctx.fillText(c.toString, 0, canvas.height / 2)
         val measure = ctx.measureText(c.toString)
 
-        val charMetrics: FontMetrics = print(c.toString, canvas, ctx)
+        val charMetrics: FontMetrics = print(c.toString, canvas, ctx, colorThreshold)
 
         val charWitdh =
           if (charMetrics.width <= 0) {
@@ -42,7 +42,7 @@ object OffscreenFont {
         for (y <- metrics.minY to metrics.maxY)
           for (x <- charMetrics.minX to charMetrics.maxX) {
             val red = charMetrics.data(y * 4 * canvas.width + x * 4)
-            val value = getValue(red)
+            val value = red > colorThreshold
             charFont.set(y - metrics.minY, x - charMetrics.minX, value)
           }
       }
@@ -66,7 +66,7 @@ object OffscreenFont {
     override def toString: String = "(" + minX + "-" + maxX + ", " + minY + "-" + maxY + ", " + width + ", " + height + ")"
   }
 
-  private def print(text: String, canvas: html.Canvas, ctx: dom.CanvasRenderingContext2D) : FontMetrics = {
+  private def print(text: String, canvas: html.Canvas, ctx: dom.CanvasRenderingContext2D, colorThreshold: Int) : FontMetrics = {
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -80,7 +80,7 @@ object OffscreenFont {
     for (y <- 0 until canvas.height)
       for (x <- 0 until canvas.width) {
         val red = data(y * 4 * canvas.width + x * 4)
-        val value = getValue(red)
+        val value = red > colorThreshold
         if (value) {
           metrics.update(x, y)
         }
@@ -88,7 +88,5 @@ object OffscreenFont {
 
     metrics
   }
-
-  private def getValue(red: Int) : Boolean = red > 50
 
 }

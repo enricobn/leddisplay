@@ -1,5 +1,4 @@
-package org.leddisplay
-
+import org.leddisplay.{Font, ImageFont, LedDisplayCanvas, OffscreenFont}
 import org.scalajs.dom
 import org.scalajs.dom.html
 

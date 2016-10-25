@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Led display</title>
+    </head>
+
+    <body>
+        <!-- Include Scala.js compiled code -->
+        <script type="text/javascript" src="./target/scala-2.11/leddisplay-opt.js"></script>
+
+        Display1:
+        <div id="ledDisplay0"></div>
+        <br/>
+        Display2:
+        <div id="ledDisplay1"></div>
+        <br/>
+        Display3:
+        <div id="ledDisplay2"></div>
+
+        <script type="text/javascript">
+          var i = 0;
+          for (i = 0; i < 3; i++) {
+            var displayConfig = new org.leddisplay.LedDisplayConfig();
+            if (i == 1) {
+              displayConfig.color = "#00ff00";
+              displayConfig.timeout = 40;
+            } else if (i == 2) {
+              displayConfig.color = "#0000ff";
+              displayConfig.timeout = 30;
+            }
+
+            var displayManager = new org.leddisplay.LedDisplayManager('ledDisplay' + i, displayConfig);
+
+            //displayManager.setText("HgtjThis is a led display ");
+            displayManager.addText("This is a led display component written in Scala.js.");
+            displayManager.scrolling = true;
+          }
+          //tutorial.webapp.TutorialAppReact().main();
+        </script>
+
+    </body>
+</html>

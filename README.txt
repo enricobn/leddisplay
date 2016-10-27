@@ -93,7 +93,7 @@ EXAMPLES
 
 Import the library
 -------------------
-<script type="text/javascript" src="leddisplay-opt.js"></script>
+<script type="text/javascript" src="leddisplay-VERSION.min.js"></script>
 
 
 Fixed text

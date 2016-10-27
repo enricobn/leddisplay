@@ -1,6 +1,6 @@
 import sbt.Keys._
 
-val ver = "1.0"
+val ver = "1.0.0"
 
 val artifactPrefix = "target/scala-2.11/leddisplay-" + ver
 

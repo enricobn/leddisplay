@@ -1,7 +1,7 @@
 ===========
 LedDisplay
 ===========
-A javascript library to show a led display inside a div. It's written in Scala.js
+A javascript library to show a led display inside a div, written in Scala.js
 
 ====
 API
